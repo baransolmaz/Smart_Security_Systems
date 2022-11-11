@@ -1,0 +1,42 @@
+<resources>
+    <string name="app_name">Smart Security Systems</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_name">Name</string>
+    <string name="prompt_surname">Surname</string>
+    <string name="prompt_mail">E-mail</string>
+    <string name="button_log_in">Log In</string>
+    <string name="button_sign_up">Sign Up</string>
+    <string name="button_how_to">How To Use</string>
+    <string name="button_cam">Use As Camera</string>
+    <string name="button_mon">Use As Monitoring</string>
+    <string name="str_logo">Logo</string>
+    <string name="str_dev_sel">Device Selection</string>
+    <string name="create_user">Create User</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="warn_sep_dev">*You Cannot Change Your Preference</string>
+    <string name="info_sep_cam">- When selected, the device only acts as a camera.\n- You can run it between certain hours or start it yourself.\n- Generates a QR code to pair with the tracking device.</string>
+    <string name="info_sep_mon">- When selected, the device only acts as a monitoring device.\n- You can pair it with a camera and monitor previously paired cameras in real time.\n- You can look at the motion moments recorded by the cameras.\n- You can select a package.</string>
+    <string name="str_plan">Plan</string>
+    <string name="str_profile">Profile</string>
+    <string name="str_home">Home</string>
+    <string name="str_settings">Settings</string>
+    <string name="str_cam">Camera</string>
+    <string name="str_live">Watch Live</string>
+    <string name="str_arch">See Archive</string>
+    <string name="str_pair">Pair Cam</string>
+    <string name="str_alert">Alerts</string>
+    <string name="str_start">Start</string>
+    <string name="str_stop">Stop</string>
+    <string name="str_set">Set</string>
+    <string name="str_qr">Create QR</string>
+    <string name="str_prev">Prev</string>
+    <string name="str_next">Next</string>
+    <string name="str_basic">Basic Plan</string>
+    <string name="str_advanced">Advanced Plan</string>
+    <string name="button_basic">Start Basic</string>
+    <string name="button_advanced">Start Advanced</string>
+
+</resources>
