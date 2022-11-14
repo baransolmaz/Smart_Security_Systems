@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "188356506203",
+    "project_id": "smart-security-systems-72f11",
+    "storage_bucket": "smart-security-systems-72f11.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188356506203:android:67d32e31a38448469a057e",
+        "android_client_info": {
+          "package_name": "com.baran.smartsecuritysystems"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188356506203-kff8srd6mcaqsd4rcfilgab1b20ogciu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCsEEYw4LDJOTbmJDaXdnxVKIAviCY_M_k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188356506203-kff8srd6mcaqsd4rcfilgab1b20ogciu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
