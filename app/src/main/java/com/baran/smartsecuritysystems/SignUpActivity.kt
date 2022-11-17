@@ -17,25 +17,28 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.createUserButton.setOnClickListener{
-            val name = binding.signName.text.toString()
-            val surname = binding.signSurname.text.toString()
-            val username = binding.signUsername.text.toString()
-            val pass = binding.signPassword.text.toString()
-            val mail = binding.signMail.text.toString()
-            Toast.makeText(this,"bind ok!"+username,Toast.LENGTH_LONG).show()
-            database=FirebaseDatabase.getInstance().getReference("Users")
-            print("ex")
-            val user=User(name,surname,username,pass,mail)
-            database.child(username).setValue(user).addOnSuccessListener {
+            database=FirebaseDatabase.getInstance("https://smart-security-systems-72f11-default-rtdb.europe-west1.firebasedatabase.app/").reference
+            val user=getValues()
+
+            database.child("Users").child(user.mail.toString()).setValue(user).addOnSuccessListener {
                 binding.signName.text.clear()
                 binding.signSurname.text.clear()
                 binding.signUsername.text.clear()
                 binding.signPassword.text.clear()
                 binding.signMail.text.clear()
-                Toast.makeText(this,"Successfully Saved!",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,"Successfully Saved!",Toast.LENGTH_LONG).show()
             }.addOnFailureListener{
-                Toast.makeText(this,"Failed!",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this,"Failed!",Toast.LENGTH_LONG).show()
             }
         }
+    }
+    private fun getValues(): User {
+        val name = binding.signName.text.toString()
+        val surname = binding.signSurname.text.toString()
+        val username = binding.signUsername.text.toString()
+        val pass = binding.signPassword.text.toString()
+        val mail = binding.signMail.text.toString()
+        //TODO Mail database de var mı diye kontrol et yoksa ekle , varsa tekrar iste*/
+        return User(name,surname,username,pass,mail)
     }
 }
