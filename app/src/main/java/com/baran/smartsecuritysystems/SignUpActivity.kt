@@ -2,6 +2,7 @@ package com.baran.smartsecuritysystems
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import com.baran.smartsecuritysystems.databinding.ActivitySignUpBinding
 import com.google.firebase.database.DatabaseReference
@@ -13,6 +14,7 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
+        window.decorView.systemUiVisibility= View.SYSTEM_UI_FLAG_FULLSCREEN
         binding=ActivitySignUpBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -27,6 +29,7 @@ class SignUpActivity : AppCompatActivity() {
                 binding.signPassword.text.clear()
                 binding.signMail.text.clear()
                 Toast.makeText(this,"Successfully Saved!",Toast.LENGTH_LONG).show()
+                finish()
             }.addOnFailureListener{
                 Toast.makeText(this,"Failed!",Toast.LENGTH_LONG).show()
             }

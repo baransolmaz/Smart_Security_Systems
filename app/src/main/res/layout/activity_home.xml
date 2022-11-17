@@ -35,9 +35,11 @@
 
     <View
         android:id="@+id/divider_alert"
-        android:layout_width="300dp"
+        android:layout_width="0dp"
         android:layout_height="1dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
         android:background="@color/light_cyan"
         android:backgroundTint="@color/light_cyan"
         app:layout_constraintEnd_toEndOf="parent"
@@ -62,7 +64,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
             android:orientation="horizontal">
 
             <TextView
@@ -70,20 +74,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_cam"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <View
                 android:id="@+id/divider6"
                 android:layout_width="1dp"
                 android:layout_height="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="?android:attr/listDivider" />
 
             <TextView
@@ -91,20 +95,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_arch"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <View
                 android:id="@+id/divider7"
                 android:layout_width="1dp"
                 android:layout_height="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="?android:attr/listDivider" />
 
             <TextView
@@ -112,20 +116,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_live"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <View
                 android:id="@+id/divider8"
                 android:layout_width="1dp"
                 android:layout_height="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="?android:attr/listDivider" />
 
             <TextView
@@ -133,13 +137,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_pair"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
         </LinearLayout>
 
@@ -148,7 +152,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
             android:orientation="horizontal">
 
             <TextView
@@ -156,20 +162,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_cam"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <View
                 android:id="@+id/divider9"
                 android:layout_width="1dp"
                 android:layout_height="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="?android:attr/listDivider" />
 
             <TextView
@@ -177,20 +183,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_arch"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <View
                 android:id="@+id/divider10"
                 android:layout_width="1dp"
                 android:layout_height="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="?android:attr/listDivider" />
 
             <TextView
@@ -198,20 +204,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_live"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <View
                 android:id="@+id/divider11"
                 android:layout_width="1dp"
                 android:layout_height="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="?android:attr/listDivider" />
 
             <TextView
@@ -219,13 +225,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_pair"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -233,7 +239,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
             android:orientation="horizontal">
 
             <TextView
@@ -241,20 +249,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_cam"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <View
                 android:id="@+id/divider12"
                 android:layout_width="1dp"
                 android:layout_height="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="?android:attr/listDivider" />
 
             <TextView
@@ -262,20 +270,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_arch"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <View
                 android:id="@+id/divider13"
                 android:layout_width="1dp"
                 android:layout_height="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="?android:attr/listDivider" />
 
             <TextView
@@ -283,20 +291,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_live"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <View
                 android:id="@+id/divider14"
                 android:layout_width="1dp"
                 android:layout_height="20dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
                 android:background="?android:attr/listDivider" />
 
             <TextView
@@ -304,13 +312,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:text="@string/str_pair"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
 
@@ -327,7 +335,7 @@
         app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/area_allCam"
-        app:layout_constraintVertical_bias="0.1" />
+        app:layout_constraintVertical_bias="0.05" />
 
     <View
         android:id="@+id/divider_middle"
@@ -372,7 +380,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textColor="@color/light_cyan" />
+        </LinearLayout>
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
