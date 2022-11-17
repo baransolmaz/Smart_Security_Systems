@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.View
 
 class PlanActivity : AppCompatActivity() {
+
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()

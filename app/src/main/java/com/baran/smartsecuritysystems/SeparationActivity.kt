@@ -7,6 +7,8 @@ import android.view.View
 import android.widget.Button
 
 class SeparationActivity : AppCompatActivity() {
+
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()

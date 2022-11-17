@@ -7,6 +7,8 @@ import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 
 class ProfileActivity : AppCompatActivity() {
+
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
