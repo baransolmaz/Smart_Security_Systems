@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import com.baran.smartsecuritysystems.databinding.ActivityHomeBinding
 import com.baran.smartsecuritysystems.databinding.ActivityProfileBinding
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.firebase.database.DataSnapshot
@@ -45,7 +44,7 @@ class ProfileActivity : AppCompatActivity() {
                 var mail=dataSnapshot.child("mail").value.toString()
                 firstName="Name: $firstName"
                 lastName="Surname: $lastName"
-                var username="Username: $userName"
+                val username="Username: $userName"
                 mail= "E-mail: $mail"
                 binding.profileName.text=firstName
                 binding.profileSurname.text=lastName
@@ -63,18 +62,24 @@ class ProfileActivity : AppCompatActivity() {
         val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
         navBarHome.setOnClickListener{
             val intent = Intent(this, HomeActivity::class.java)
+            intent.putExtra("USERNAME",userName)
+            intent.putExtra("DEVICE_ID",deviceId)
             startActivity(intent)
             finish()
         }
         val navBarProfile=findViewById<BottomNavigationItemView>(R.id.profile_nav)
         navBarProfile.setOnClickListener{
             val intent = Intent(this, ProfileActivity::class.java)
+            intent.putExtra("USERNAME",userName)
+            intent.putExtra("DEVICE_ID",deviceId)
             startActivity(intent)
             finish()
         }
         val navBarSettings=findViewById<BottomNavigationItemView>(R.id.settings_nav)
         navBarSettings.setOnClickListener{
             val intent = Intent(this, SettingsActivity::class.java)
+            intent.putExtra("USERNAME",userName)
+            intent.putExtra("DEVICE_ID",deviceId)
             startActivity(intent)
             finish()
         }

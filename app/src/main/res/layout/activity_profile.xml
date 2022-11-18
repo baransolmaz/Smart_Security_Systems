@@ -70,7 +70,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/prompt_username"
             android:textColor="@color/light_cyan"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@+id/profile_name"
             app:layout_constraintTop_toBottomOf="@+id/profile_surname" />
 
@@ -81,7 +81,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/prompt_mail"
             android:textColor="@color/light_cyan"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@+id/profile_surname"
             app:layout_constraintTop_toBottomOf="@+id/profile_username" />
 
