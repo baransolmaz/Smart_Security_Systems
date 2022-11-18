@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
@@ -61,6 +62,9 @@ class MainActivity : AppCompatActivity() {
                             if (pass == inputPass) {
                                 Toast.makeText(this@MainActivity,"Log in successful!",Toast.LENGTH_SHORT).show()
                                 val intent =Intent(this@MainActivity, SeparationActivity::class.java)
+                                intent.putExtra("USERNAME",inputUsername)
+                                val id: String = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+                                intent.putExtra("DEVICE_ID",id)
                                 startActivity(intent)
                             }
                         }else{
@@ -123,11 +127,11 @@ class MainActivity : AppCompatActivity() {
                 "-You can see your account in profile menu\n" +
                 "-You can edit settings")
 
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK") { dialog, _ -> dialog.dismiss() }
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK") { dialog, _ -> dialog.dismiss() }
 
         alertDialog.show()
 
-        val btnPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        val btnPositive = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)
 
         val layoutParams = btnPositive.layoutParams as LinearLayout.LayoutParams
         layoutParams.weight = 10f
