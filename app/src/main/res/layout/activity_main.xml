@@ -9,8 +9,8 @@
 
     <ImageView
         android:id="@+id/main_logo"
-        android:layout_width="400dp"
-        android:layout_height="150dp"
+        android:layout_width="0dp"
+        android:layout_height="140dp"
         android:layout_marginTop="60dp"
         android:contentDescription="@string/str_logo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -72,7 +72,6 @@
         android:id="@+id/main_password"
         android:layout_width="260dp"
         android:layout_height="50dp"
-        android:layout_marginTop="15dp"
         android:background="@drawable/text_shape"
         android:ems="10"
         android:hint="@string/prompt_password"
@@ -81,15 +80,17 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_username" />
+        app:layout_constraintTop_toBottomOf="@+id/main_logo"
+        app:layout_constraintVertical_bias="0.25" />
 
     <EditText
         android:id="@+id/main_username"
         android:layout_width="260dp"
         android:layout_height="50dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginBottom="15dp"
         android:background="@drawable/text_shape"
         android:ems="10"
         android:hint="@string/prompt_username"
@@ -98,11 +99,9 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textColorHint="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/main_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/main_logo"
-        app:layout_constraintVertical_bias="0.1"
         tools:ignore="TextContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
