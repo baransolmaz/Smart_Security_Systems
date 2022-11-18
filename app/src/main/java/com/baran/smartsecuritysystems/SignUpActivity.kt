@@ -1,7 +1,12 @@
 package com.baran.smartsecuritysystems
 
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
+import android.provider.Settings.Secure
+import android.text.TextUtils
+import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import com.baran.smartsecuritysystems.databinding.ActivitySignUpBinding
@@ -31,9 +36,16 @@ class SignUpActivity : AppCompatActivity() {
             val username = binding.signUsername.text.toString()
             val pass = binding.signPassword.text.toString()
             val mail = binding.signMail.text.toString()
-            val user=User(name, surname,username,pass,mail)
+            val id: String = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+            val user=User(name, surname,username,pass,mail, mapOf(Pair(id.toString(),0)))
             if(name.isEmpty()||surname.isEmpty()||username.isEmpty()||pass.isEmpty()||mail.isEmpty()){
                 Toast.makeText(this,"Please fill all fields!",Toast.LENGTH_SHORT).show()
+            }else if(username.length<5){
+                Toast.makeText(this,"Username must be longer than 5 characters!",Toast.LENGTH_SHORT).show()
+            }else if(pass.length<5){
+                Toast.makeText(this,"Password must be longer than 5 characters!",Toast.LENGTH_SHORT).show()
+            }else if(!isValidEmail(mail)){
+                Toast.makeText(this,"Invalid e-mail!",Toast.LENGTH_SHORT).show()
             }else{
                 database.child("Users").addListenerForSingleValueEvent( object : ValueEventListener {
 
@@ -66,6 +78,9 @@ class SignUpActivity : AppCompatActivity() {
             }
 
         }
+    }
+    private fun isValidEmail(email: String): Boolean {
+        return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
 }
