@@ -1,5 +1,7 @@
 package com.baran.smartsecuritysystems
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.hardware.camera2.*
 import androidx.appcompat.app.AppCompatActivity
@@ -7,7 +9,9 @@ import android.os.Bundle
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
-import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.baran.smartsecuritysystems.databinding.ActivityCameraBinding
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
@@ -16,6 +20,10 @@ import java.io.IOException
 
 @Suppress("DEPRECATION")
 class CameraActivity : AppCompatActivity() , SurfaceHolder.Callback, Camera.PictureCallback {
+    companion object {
+        const val CAMERA_PERMISSION_CODE = 100
+        const val REQUEST_CODE = 100
+    }
     private lateinit var binding: ActivityCameraBinding
     private lateinit var userName: String
     private lateinit var deviceId: String
@@ -28,20 +36,22 @@ class CameraActivity : AppCompatActivity() , SurfaceHolder.Callback, Camera.Pict
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        checkPermission(Manifest.permission.CAMERA, CameraActivity.CAMERA_PERMISSION_CODE)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
         binding = ActivityCameraBinding.inflate(layoutInflater)
-        setContentView(binding.root)
 
+        setContentView(binding.root)
         cameraFrame = binding.cameraFrame
-        //mCamera = Camera.open()
+
         val extras = intent.extras
         if (extras != null) {
             userName = extras.getString("USERNAME").toString()
             deviceId = extras.getString("DEVICE_ID").toString()
         }
+
         setupSurfaceHolder()
 
     }
@@ -109,12 +119,21 @@ class CameraActivity : AppCompatActivity() , SurfaceHolder.Callback, Camera.Pict
         resetCamera()
     }
 
-
-    companion object {
-        const val REQUEST_CODE = 100
+    private fun checkPermission(permission: String, requestCode: Int) {
+        if (ContextCompat.checkSelfPermission(this@CameraActivity, permission) == PackageManager.PERMISSION_DENIED) {
+            // Requesting the permission
+            ActivityCompat.requestPermissions(this@CameraActivity, arrayOf(permission), requestCode)
+        }
     }
 
-
-
-
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == CameraActivity.CAMERA_PERMISSION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this@CameraActivity, "Camera Permission Granted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this@CameraActivity, "Camera Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }

@@ -31,15 +31,14 @@ class MainActivity : AppCompatActivity() {
 
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
+        checkPermission(Manifest.permission.CAMERA,CAMERA_PERMISSION_CODE)
+        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,STORAGE_PERMISSION_CODE)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         window.decorView.systemUiVisibility= View.SYSTEM_UI_FLAG_FULLSCREEN
 
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,STORAGE_PERMISSION_CODE)
-        checkPermission(Manifest.permission.CAMERA,CAMERA_PERMISSION_CODE)
 
         binding.mainSignUp.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
@@ -64,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                                 val id: String = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
                                 if (dataSnapshot.child(inputUsername).child("devices").hasChild(id)){
                                     val type=dataSnapshot.child(inputUsername).child("devices").child(id).value.toString()
-                                    if (type == "-1") {//Camera
+                                    if(type == "-1") {//Camera
                                         val intent =Intent(this@MainActivity, CameraActivity::class.java)
                                         intent.putExtra("USERNAME",inputUsername)
                                         intent.putExtra("DEVICE_ID",id)
@@ -121,6 +120,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "Storage Permission Granted", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this@MainActivity, "Storage Permission Denied", Toast.LENGTH_SHORT).show()
+                checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,STORAGE_PERMISSION_CODE)
             }
         }
     }
