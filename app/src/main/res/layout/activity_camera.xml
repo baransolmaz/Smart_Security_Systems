@@ -11,7 +11,7 @@
         android:id="@+id/imageView"
         android:layout_width="0dp"
         android:layout_height="120dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="-10dp"
         android:contentDescription="@string/str_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,20 +28,21 @@
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="@+id/mon_prev"
         app:layout_constraintEnd_toStartOf="@+id/divider_left"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="TouchTargetSizeCheck,TextContrastCheck,TextContrastCheck" />
 
     <Button
         android:id="@+id/mon_prev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
         android:background="@drawable/rounded_button"
         android:text="@string/str_set"
         android:textColor="@color/black"
         app:backgroundTint="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/cam_qr"
         app:layout_constraintEnd_toStartOf="@+id/mon_next"
-        app:layout_constraintStart_toEndOf="@+id/cam_start" />
+        app:layout_constraintStart_toEndOf="@+id/cam_start"
+        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
     <Button
         android:id="@+id/mon_next"
@@ -53,12 +54,14 @@
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="@+id/mon_prev"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/divider_right" />
+        app:layout_constraintStart_toEndOf="@+id/divider_right"
+        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
     <Button
         android:id="@+id/cam_qr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/rounded_button"
         android:text="@string/str_qr"
         android:textColor="@color/black"
@@ -66,7 +69,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mon_prev" />
+        tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
     <View
         android:id="@+id/divider_middle"
@@ -98,19 +101,19 @@
         app:layout_constraintHorizontal_bias="0.25"
         app:layout_constraintStart_toEndOf="@+id/divider_middle" />
 
-    <FrameLayout
+    <SurfaceView
         android:id="@+id/camera_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="-20dp"
+        android:layout_marginEnd="15dp"
         android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/mon_prev"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView">
 
-    </FrameLayout>
+    </SurfaceView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
