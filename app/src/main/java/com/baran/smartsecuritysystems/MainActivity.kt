@@ -61,11 +61,27 @@ class MainActivity : AppCompatActivity() {
                             val pass=dataSnapshot.child(inputUsername).child("passWord").value.toString()
                             if (pass == inputPass) {
                                 Toast.makeText(this@MainActivity,"Log in successful!",Toast.LENGTH_SHORT).show()
-                                val intent =Intent(this@MainActivity, SeparationActivity::class.java)
-                                intent.putExtra("USERNAME",inputUsername)
                                 val id: String = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-                                intent.putExtra("DEVICE_ID",id)
-                                startActivity(intent)
+                                if (dataSnapshot.child(inputUsername).child("devices").hasChild(id)){
+                                    val type=dataSnapshot.child(inputUsername).child("devices").child(id).value.toString()
+                                    if (type == "-1") {//Camera
+                                        val intent =Intent(this@MainActivity, CameraActivity::class.java)
+                                        intent.putExtra("USERNAME",inputUsername)
+                                        intent.putExtra("DEVICE_ID",id)
+                                        startActivity(intent)
+                                    }else if (type== "1"){//Monitor
+                                        val intent =Intent(this@MainActivity, HomeActivity::class.java)
+                                        intent.putExtra("USERNAME",inputUsername)
+                                        intent.putExtra("DEVICE_ID",id)
+                                        startActivity(intent)
+                                    }else{
+                                        val intent =Intent(this@MainActivity, SeparationActivity::class.java)
+                                        intent.putExtra("USERNAME",inputUsername)
+                                        intent.putExtra("DEVICE_ID",id)
+                                        startActivity(intent)
+                                    }
+                                }
+
                             }
                         }else{
                             binding.mainUsername.text.clear()
