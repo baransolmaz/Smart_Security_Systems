@@ -8,7 +8,7 @@
     tools:context=".HomeActivity">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/logo"
         android:layout_width="0dp"
         android:layout_height="120dp"
         android:layout_marginTop="20dp"
@@ -57,7 +57,7 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView">
+        app:layout_constraintTop_toBottomOf="@+id/logo">
 
         <LinearLayout
             android:id="@+id/area_cam1"
@@ -141,10 +141,13 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="5dp"
+                android:clickable="true"
                 android:text="@string/str_pair"
                 android:textAlignment="center"
                 android:textColor="@color/light_cyan"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                tools:ignore="TouchTargetSizeCheck,DuplicateSpeakableTextCheck"
+                android:focusable="true" />
 
         </LinearLayout>
 
@@ -389,7 +392,7 @@
                 android:id="@+id/textView8"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="@string/app_name"
                 android:textColor="@color/light_cyan" />
         </LinearLayout>
     </ScrollView>
