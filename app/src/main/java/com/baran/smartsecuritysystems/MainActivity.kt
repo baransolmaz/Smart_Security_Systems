@@ -26,13 +26,12 @@ class MainActivity : AppCompatActivity() {
         private const val CAMERA_PERMISSION_CODE = 100
         private const val STORAGE_PERMISSION_CODE = 101
     }
+
     private lateinit var binding:ActivityMainBinding
     private var database: DatabaseReference =Firebase.database.reference
 
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
-        checkPermission(Manifest.permission.CAMERA,CAMERA_PERMISSION_CODE)
-        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,STORAGE_PERMISSION_CODE)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         window.decorView.systemUiVisibility= View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -40,6 +39,8 @@ class MainActivity : AppCompatActivity() {
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,STORAGE_PERMISSION_CODE)
+        checkPermission(Manifest.permission.CAMERA,CAMERA_PERMISSION_CODE)
         binding.mainSignUp.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
@@ -62,7 +63,7 @@ class MainActivity : AppCompatActivity() {
                                 Toast.makeText(this@MainActivity,"Log in successful!",Toast.LENGTH_SHORT).show()
                                 val id: String = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
                                 if (dataSnapshot.child(inputUsername).child("devices").hasChild(id)){
-                                    val type=dataSnapshot.child(inputUsername).child("devices").child(id).value.toString()
+                                    val type=dataSnapshot.child(inputUsername).child("devices").child(id).child("type").value.toString()
                                     if(type == "-1") {//Camera
                                         val intent =Intent(this@MainActivity, CameraActivity::class.java)
                                         intent.putExtra("USERNAME",inputUsername)
@@ -114,13 +115,14 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this@MainActivity, "Camera Permission Granted", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this@MainActivity, "Camera Permission Denied", Toast.LENGTH_SHORT).show()
+                //checkPermission(Manifest.permission.CAMERA, CAMERA_PERMISSION_CODE)
             }
         } else if (requestCode == STORAGE_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this@MainActivity, "Storage Permission Granted", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this@MainActivity, "Storage Permission Denied", Toast.LENGTH_SHORT).show()
-                checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,STORAGE_PERMISSION_CODE)
+                //checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,STORAGE_PERMISSION_CODE)
             }
         }
     }
@@ -152,5 +154,10 @@ class MainActivity : AppCompatActivity() {
         val layoutParams = btnPositive.layoutParams as LinearLayout.LayoutParams
         layoutParams.weight = 10f
         btnPositive.layoutParams = layoutParams
+    }
+    private fun refresh() {
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

@@ -37,7 +37,8 @@ class SignUpActivity : AppCompatActivity() {
             val pass = binding.signPassword.text.toString()
             val mail = binding.signMail.text.toString()
             val id: String = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-            val user=User(name, surname,username,pass,mail, mapOf(Pair(id.toString(),0)))
+            val device=Device(id,0,false, running = false)
+            val user=User(name, surname,username,pass,mail, mapOf(Pair<String,Device>(device.id.toString(),device)))
             if(name.isEmpty()||surname.isEmpty()||username.isEmpty()||pass.isEmpty()||mail.isEmpty()){
                 Toast.makeText(this,"Please fill all fields!",Toast.LENGTH_SHORT).show()
             }else if(username.length<5){

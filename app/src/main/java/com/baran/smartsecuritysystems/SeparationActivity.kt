@@ -30,7 +30,7 @@ class SeparationActivity : AppCompatActivity() {
             userName = extras.getString("USERNAME").toString()
             deviceId = extras.getString("DEVICE_ID").toString()
         }
-
+        val device=Device(deviceId,0,streaming = false,running = false)
         binding= ActivitySeparationBinding.inflate(layoutInflater)
         setContentView(binding.root)
         database.child("Users").child(userName).child("devices").addListenerForSingleValueEvent( object : ValueEventListener {
@@ -61,7 +61,8 @@ class SeparationActivity : AppCompatActivity() {
 
         })
         binding.sepCam.setOnClickListener {
-            database.child("Users").child(userName).child("devices").child(deviceId).setValue(-1).addOnSuccessListener {
+            device.type=-1
+            database.child("Users").child(userName).child("devices").child(deviceId).setValue(device).addOnSuccessListener {
                 val intent = Intent(this, CameraActivity::class.java)
                 intent.putExtra("USERNAME",userName)
                 intent.putExtra("DEVICE_ID",deviceId)
@@ -73,7 +74,8 @@ class SeparationActivity : AppCompatActivity() {
 
         }
         binding.sepMon.setOnClickListener {
-            database.child("Users").child(userName).child("devices").child(deviceId).setValue(1).addOnSuccessListener {
+            device.type=1
+            database.child("Users").child(userName).child("devices").child(deviceId).setValue(device).addOnSuccessListener {
                 val intent = Intent(this, HomeActivity::class.java)
                 intent.putExtra("USERNAME",userName)
                 intent.putExtra("DEVICE_ID",deviceId)

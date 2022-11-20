@@ -32,7 +32,13 @@ class HomeActivity : AppCompatActivity() {
             userName = extras.getString("USERNAME").toString()
             deviceId = extras.getString("DEVICE_ID").toString()
         }
-
+        binding.textPair1.setOnClickListener{
+            val intent = Intent(this, PairCamActivity::class.java)
+            //intent.putExtra("USERNAME",userName)
+            //intent.putExtra("DEVICE_ID",deviceId)
+            startActivity(intent)
+            //finish()
+        }
         val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
         navBarHome.setOnClickListener{
             val intent = Intent(this, HomeActivity::class.java)

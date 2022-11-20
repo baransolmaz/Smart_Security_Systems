@@ -1,15 +1,16 @@
 package com.baran.smartsecuritysystems
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.hardware.Camera
 import android.hardware.camera2.*
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.baran.smartsecuritysystems.databinding.ActivityCameraBinding
@@ -18,11 +19,12 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.io.IOException
 
+
 @Suppress("DEPRECATION")
 class CameraActivity : AppCompatActivity() , SurfaceHolder.Callback, Camera.PictureCallback {
     companion object {
-        const val CAMERA_PERMISSION_CODE = 100
-        const val REQUEST_CODE = 100
+        private const val CAMERA_PERMISSION_CODE = 100
+        private const val REQUEST_CODE = 100
     }
     private lateinit var binding: ActivityCameraBinding
     private lateinit var userName: String
@@ -36,13 +38,13 @@ class CameraActivity : AppCompatActivity() , SurfaceHolder.Callback, Camera.Pict
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        checkPermission(Manifest.permission.CAMERA, CameraActivity.CAMERA_PERMISSION_CODE)
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
 
         binding = ActivityCameraBinding.inflate(layoutInflater)
 
+        checkPermission(Manifest.permission.CAMERA, CameraActivity.CAMERA_PERMISSION_CODE)
         setContentView(binding.root)
         cameraFrame = binding.cameraFrame
 
@@ -53,6 +55,12 @@ class CameraActivity : AppCompatActivity() , SurfaceHolder.Callback, Camera.Pict
         }
 
         setupSurfaceHolder()
+        binding.camQr.setOnClickListener{
+            var intent=Intent(this,QrActivity::class.java)
+            intent.putExtra("DEVICE_ID",deviceId)
+            intent.putExtra("USERNAME",userName)
+            startActivity(intent)
+        }
 
     }
     private fun setupSurfaceHolder() {
@@ -115,6 +123,7 @@ class CameraActivity : AppCompatActivity() , SurfaceHolder.Callback, Camera.Pict
         camera = null
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onPictureTaken(bytes: ByteArray, camera: Camera) {
         resetCamera()
     }
@@ -131,9 +140,17 @@ class CameraActivity : AppCompatActivity() , SurfaceHolder.Callback, Camera.Pict
         if (requestCode == CameraActivity.CAMERA_PERMISSION_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this@CameraActivity, "Camera Permission Granted", Toast.LENGTH_SHORT).show()
+                refresh()
             } else {
                 Toast.makeText(this@CameraActivity, "Camera Permission Denied", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+    private fun refresh(){
+        val i = Intent(intent)
+        i.putExtra("USERNAME",userName)
+        i.putExtra("DEVICE_ID",deviceId)
+        startActivity(i)
+        finish()
     }
 }
