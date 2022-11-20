@@ -9,7 +9,7 @@ import com.baran.smartsecuritysystems.databinding.ActivityQrBinding
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.journeyapps.barcodescanner.BarcodeEncoder
-
+ 
 class QrActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQrBinding
     private lateinit var userName: String
