@@ -25,6 +25,11 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val CAMERA_PERMISSION_CODE = 100
         private const val STORAGE_PERMISSION_CODE = 101
+        lateinit var APP_ID :String
+        lateinit var APP_CER :String
+        lateinit var TOKEN:String
+        lateinit var DEVICE_ID:String
+        lateinit var USERNAME:String
     }
 
     private lateinit var binding:ActivityMainBinding
@@ -39,17 +44,28 @@ class MainActivity : AppCompatActivity() {
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,STORAGE_PERMISSION_CODE)
-        checkPermission(Manifest.permission.CAMERA,CAMERA_PERMISSION_CODE)
+        checkPermission()
         binding.mainSignUp.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
             //finish()
         }
+
+        database.addListenerForSingleValueEvent( object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.hasChild("AppID"))
+                    APP_ID =dataSnapshot.child("AppID").value.toString()
+                if (dataSnapshot.hasChild("AppCer"))
+                    APP_CER=dataSnapshot.child("AppCer").value.toString()
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.d("error", databaseError.message)
+            }
+        })
         binding.mainLogIn.setOnClickListener {
 
-            var inputUsername=binding.mainUsername.text.toString()
-            var inputPass=binding.mainPassword.text.toString()
+            val inputUsername=binding.mainUsername.text.toString()
+            val inputPass=binding.mainPassword.text.toString()
 
             if (inputUsername.isEmpty()||inputPass.isEmpty()){
                 Toast.makeText(this,"Please Enter Username/Password",Toast.LENGTH_SHORT).show()
@@ -62,32 +78,29 @@ class MainActivity : AppCompatActivity() {
                             if (pass == inputPass) {
                                 Toast.makeText(this@MainActivity,"Log in successful!",Toast.LENGTH_SHORT).show()
                                 val id: String = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+                                DEVICE_ID=id
+                                USERNAME=inputUsername
                                 if (dataSnapshot.child(inputUsername).child("devices").hasChild(id)){
                                     val type=dataSnapshot.child(inputUsername).child("devices").child(id).child("type").value.toString()
                                     if(type == "-1") {//Camera
+                                        TOKEN=dataSnapshot.child(inputUsername).child("devices").child(id).child("token").value.toString()
                                         val intent =Intent(this@MainActivity, CameraActivity::class.java)
-                                        intent.putExtra("USERNAME",inputUsername)
-                                        intent.putExtra("DEVICE_ID",id)
                                         startActivity(intent)
                                     }else if (type== "1"){//Monitor
                                         val intent =Intent(this@MainActivity, HomeActivity::class.java)
-                                        intent.putExtra("USERNAME",inputUsername)
-                                        intent.putExtra("DEVICE_ID",id)
                                         startActivity(intent)
                                     }else{
                                         val intent =Intent(this@MainActivity, SeparationActivity::class.java)
-                                        intent.putExtra("USERNAME",inputUsername)
-                                        intent.putExtra("DEVICE_ID",id)
                                         startActivity(intent)
                                     }
+                                }else{
+                                    val intent =Intent(this@MainActivity, SeparationActivity::class.java)
+                                    startActivity(intent)
                                 }
-
-                            }
-                        }else{
-                            binding.mainUsername.text.clear()
-                            binding.mainPassword.text.clear()
-                            Toast.makeText(this@MainActivity,"Wrong username or password",Toast.LENGTH_SHORT).show()
-                        }
+                            }else
+                                clearInputs()
+                        }else
+                            clearInputs()
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
@@ -101,10 +114,10 @@ class MainActivity : AppCompatActivity() {
 
     }
     // Function to check and request permission.
-    private fun checkPermission(permission: String, requestCode: Int) {
-        if (ContextCompat.checkSelfPermission(this@MainActivity, permission) == PackageManager.PERMISSION_DENIED) {
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             // Requesting the permission
-            ActivityCompat.requestPermissions(this@MainActivity, arrayOf(permission), requestCode)
+            ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
         }
     }
 
@@ -159,5 +172,10 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivity(intent)
         finish()
+    }
+    private fun clearInputs() {
+        binding.mainUsername.text.clear()
+        binding.mainPassword.text.clear()
+        Toast.makeText(this@MainActivity,"Wrong username or password",Toast.LENGTH_SHORT).show()
     }
 }
