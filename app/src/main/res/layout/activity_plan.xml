@@ -31,7 +31,7 @@
         app:layout_constraintVertical_bias="0.55" />
 
     <Button
-        android:id="@+id/mon_prev"
+        android:id="@+id/plan_basic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_button"
@@ -45,14 +45,14 @@
         app:layout_constraintTop_toBottomOf="@+id/divider5" />
 
     <Button
-        android:id="@+id/mon_next"
+        android:id="@+id/plan_adv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_button"
         android:text="@string/button_advanced"
         android:textColor="@color/black"
         app:backgroundTint="@null"
-        app:layout_constraintBottom_toBottomOf="@+id/mon_prev"
+        app:layout_constraintBottom_toBottomOf="@+id/plan_basic"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/divider5" />

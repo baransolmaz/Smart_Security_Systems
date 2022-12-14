@@ -11,7 +11,6 @@
         android:id="@+id/logo"
         android:layout_width="0dp"
         android:layout_height="120dp"
-        android:layout_marginTop="20dp"
         android:contentDescription="@string/str_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,37 +18,41 @@
         app:srcCompat="@drawable/black_logo_400x150" />
 
     <Button
-        android:id="@+id/mon_prev"
+        android:id="@+id/mon_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="15dp"
         android:background="@drawable/rounded_button"
-        android:text="@string/str_prev"
+        android:text="@string/str_back"
+        android:textColor="@color/black"
+        app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/divider_middle"
+        app:layout_constraintTop_toBottomOf="@+id/divider_middle"
+        app:layout_constraintVertical_bias="0.9" />
+
+    <Button
+        android:id="@+id/mon_watch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:background="@drawable/rounded_button"
+        android:text="watch"
         android:textColor="@color/black"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/divider_middle"
-        app:layout_constraintHorizontal_bias="0.75"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/mon_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rounded_button"
-        android:text="@string/str_next"
-        android:textColor="@color/black"
-        app:backgroundTint="@null"
-        app:layout_constraintBottom_toBottomOf="@+id/mon_prev"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.25"
-        app:layout_constraintStart_toEndOf="@+id/divider_middle" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider_middle"
+        app:layout_constraintVertical_bias="0.9" />
 
     <View
         android:id="@+id/divider_middle"
         android:layout_width="1dp"
         android:layout_height="20dp"
         android:background="?android:attr/listDivider"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,6 +63,7 @@
         android:layout_width="1dp"
         android:layout_height="20dp"
         android:background="?android:attr/listDivider"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/divider_middle"
         app:layout_constraintEnd_toStartOf="@+id/divider_middle"
         app:layout_constraintHorizontal_bias="0.75"
@@ -70,6 +74,7 @@
         android:layout_width="1dp"
         android:layout_height="20dp"
         android:background="?android:attr/listDivider"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/divider_middle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.25"
@@ -79,11 +84,9 @@
         android:id="@+id/camera_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/mon_prev"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo">

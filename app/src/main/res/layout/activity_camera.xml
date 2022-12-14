@@ -24,15 +24,18 @@
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_button"
         android:text="@string/str_start"
+        android:onClick="joinChannel"
         android:textColor="@color/black"
         app:backgroundTint="@null"
-        app:layout_constraintBottom_toBottomOf="@+id/mon_prev"
+        app:layout_constraintBottom_toBottomOf="@+id/cam_timer"
         app:layout_constraintEnd_toStartOf="@+id/divider_left"
+        app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/cam_timer"
         tools:ignore="TouchTargetSizeCheck,TextContrastCheck,TextContrastCheck" />
 
     <Button
-        android:id="@+id/mon_prev"
+        android:id="@+id/cam_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_button"
@@ -40,21 +43,24 @@
         android:textColor="@color/black"
         app:backgroundTint="@null"
         app:layout_constraintBottom_toTopOf="@+id/cam_qr"
-        app:layout_constraintEnd_toStartOf="@+id/mon_next"
+        app:layout_constraintEnd_toStartOf="@+id/cam_stop"
         app:layout_constraintStart_toEndOf="@+id/cam_start"
         tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
     <Button
-        android:id="@+id/mon_next"
+        android:id="@+id/cam_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_button"
         android:text="@string/str_stop"
+        android:onClick="leaveChannel"
         android:textColor="@color/black"
         app:backgroundTint="@null"
-        app:layout_constraintBottom_toBottomOf="@+id/mon_prev"
+        app:layout_constraintBottom_toBottomOf="@+id/cam_timer"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.312"
         app:layout_constraintStart_toEndOf="@+id/divider_right"
+        app:layout_constraintTop_toTopOf="@+id/cam_timer"
         tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
     <Button
@@ -101,7 +107,7 @@
         app:layout_constraintHorizontal_bias="0.25"
         app:layout_constraintStart_toEndOf="@+id/divider_middle" />
 
-    <SurfaceView
+    <FrameLayout
         android:id="@+id/camera_frame"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -111,9 +117,11 @@
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/logo">
+        app:layout_constraintTop_toBottomOf="@+id/logo"
+        app:layout_constraintVertical_bias="1.0">
 
-    </SurfaceView>
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

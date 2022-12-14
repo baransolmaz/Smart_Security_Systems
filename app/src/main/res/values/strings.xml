@@ -32,6 +32,7 @@
     <string name="str_stop">Stop</string>
     <string name="str_set">Set Timer</string>
     <string name="str_qr">Create QR</string>
+    <string name="str_back">Back</string>
     <string name="str_prev">Prev</string>
     <string name="str_next">Next</string>
     <string name="str_basic">Basic Plan</string>
