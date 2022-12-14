@@ -1,16 +1,15 @@
 package com.baran.smartsecuritysystems
 
-import android.os.Build
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.provider.Settings.Secure
 import android.text.TextUtils
+import android.util.Log
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import com.baran.smartsecuritysystems.databinding.ActivitySignUpBinding
-import com.google.firebase.FirebaseError
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -22,6 +21,7 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var binding:ActivitySignUpBinding
     private var database: DatabaseReference=Firebase.database.reference
 
+    @SuppressLint("HardwareIds")
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +37,8 @@ class SignUpActivity : AppCompatActivity() {
             val pass = binding.signPassword.text.toString()
             val mail = binding.signMail.text.toString()
             val id: String = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
-            val device=Device(id,0,false, running = false)
-            val user=User(name, surname,username,pass,mail, mapOf(Pair<String,Device>(device.id.toString(),device)))
+            val device=Device(id,0, mapOf(Pair("1",Camera(1))))
+            val user=User(name, surname,username,pass,mail, mapOf(Pair(device.id.toString(),device)))
             if(name.isEmpty()||surname.isEmpty()||username.isEmpty()||pass.isEmpty()||mail.isEmpty()){
                 Toast.makeText(this,"Please fill all fields!",Toast.LENGTH_SHORT).show()
             }else if(username.length<5){
@@ -69,19 +69,13 @@ class SignUpActivity : AppCompatActivity() {
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
-                        //TODO
-                        //Log.d("error", databaseError.message)
-
+                        Log.d("error", databaseError.message)
                     }
-
                 })
-
             }
-
         }
     }
     private fun isValidEmail(email: String): Boolean {
         return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
-
 }
