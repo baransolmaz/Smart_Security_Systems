@@ -54,5 +54,7 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.recyclerview:recyclerview:1.2.1"
     implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+    implementation 'io.agora.rtc:full-sdk:4.0.1'
+    implementation "commons-codec:commons-codec:1.11"
 
 }
