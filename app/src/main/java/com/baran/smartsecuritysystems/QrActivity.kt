@@ -12,8 +12,8 @@ import com.journeyapps.barcodescanner.BarcodeEncoder
  
 class QrActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQrBinding
-    private lateinit var userName: String
-    private lateinit var deviceId: String
+    private var deviceId: String = MainActivity.DEVICE_ID
+    private var token: String = MainActivity.TOKEN
     lateinit var bitmap: Bitmap
 
     @Suppress("DEPRECATION")
@@ -25,18 +25,13 @@ class QrActivity : AppCompatActivity() {
         binding=ActivityQrBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val extras = intent.extras
-        if (extras != null) {
-            userName = extras.getString("USERNAME").toString()
-            deviceId = extras.getString("DEVICE_ID").toString()
-        }
         var qrImage=binding.qrImage
         var closeBut=binding.closeBut
 
         try {
             val barcodeEncoder = BarcodeEncoder()
             val screenWidth = resources.displayMetrics.widthPixels
-            bitmap = barcodeEncoder.encodeBitmap(deviceId,BarcodeFormat.QR_CODE, screenWidth,screenWidth)
+            bitmap = barcodeEncoder.encodeBitmap("$deviceId::$token",BarcodeFormat.QR_CODE, screenWidth,screenWidth)
             qrImage.setImageBitmap(bitmap)
         } catch (e: WriterException) {
             Log.e("generateQR()", e.message.toString())

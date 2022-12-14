@@ -16,8 +16,8 @@ import com.google.firebase.ktx.Firebase
  
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
-    private lateinit var userName: String
-    private lateinit var deviceId: String
+    private var userName: String =MainActivity.USERNAME
+    private var deviceId: String = MainActivity.DEVICE_ID
     private var database: DatabaseReference = Firebase.database.reference
 
     @Suppress("DEPRECATION")
@@ -29,12 +29,6 @@ class ProfileActivity : AppCompatActivity() {
 
         binding= ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val extras = intent.extras
-        if (extras != null) {
-            userName = extras.getString("USERNAME").toString()
-            deviceId = extras.getString("DEVICE_ID").toString()
-        }
 
         database.child("Users").child(userName).addListenerForSingleValueEvent( object : ValueEventListener {
 
@@ -54,7 +48,6 @@ class ProfileActivity : AppCompatActivity() {
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.d("error", databaseError.message)
-
             }
 
         })
@@ -62,24 +55,18 @@ class ProfileActivity : AppCompatActivity() {
         val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
         navBarHome.setOnClickListener{
             val intent = Intent(this, HomeActivity::class.java)
-            intent.putExtra("USERNAME",userName)
-            intent.putExtra("DEVICE_ID",deviceId)
             startActivity(intent)
             finish()
         }
-        val navBarProfile=findViewById<BottomNavigationItemView>(R.id.profile_nav)
+        /*val navBarProfile=findViewById<BottomNavigationItemView>(R.id.profile_nav)
         navBarProfile.setOnClickListener{
             val intent = Intent(this, ProfileActivity::class.java)
-            intent.putExtra("USERNAME",userName)
-            intent.putExtra("DEVICE_ID",deviceId)
             startActivity(intent)
             finish()
-        }
+        }*/
         val navBarSettings=findViewById<BottomNavigationItemView>(R.id.settings_nav)
         navBarSettings.setOnClickListener{
             val intent = Intent(this, SettingsActivity::class.java)
-            intent.putExtra("USERNAME",userName)
-            intent.putExtra("DEVICE_ID",deviceId)
             startActivity(intent)
             finish()
         }
