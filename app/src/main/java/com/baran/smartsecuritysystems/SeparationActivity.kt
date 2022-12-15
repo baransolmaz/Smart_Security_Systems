@@ -9,7 +9,7 @@ import com.baran.smartsecuritysystems.databinding.ActivitySeparationBinding
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import io.agora.media.RtcTokenBuilder
+import io.agora.media.RtcTokenBuilder2
 
 class SeparationActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySeparationBinding
@@ -64,17 +64,16 @@ class SeparationActivity : AppCompatActivity() {
     }
 
     private fun generateToken(): String {
-        val expirationTimeInSeconds = 12 * 60 * 60//12 saat
-        val token = RtcTokenBuilder()
-        val timestamp = (System.currentTimeMillis() / 1000 + expirationTimeInSeconds).toInt()
-        return token.buildTokenWithUserAccount(
+        val expirationTimeInSeconds = 12 * 60 * 60//12 saat-1 sn
+        val token = RtcTokenBuilder2()
+        val timestamp = (System.currentTimeMillis() / 1000 + expirationTimeInSeconds-1).toInt()
+        return token.buildTokenWithUid(
             appID,
             appCer,
             deviceId,
-            "0",
-            RtcTokenBuilder.Role.Role_Publisher,
-            timestamp
-        )
+            0,
+            RtcTokenBuilder2.Role.ROLE_PUBLISHER,
+            timestamp,timestamp)
     }
 
 }
