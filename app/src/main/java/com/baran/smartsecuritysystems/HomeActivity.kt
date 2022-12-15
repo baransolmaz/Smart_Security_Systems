@@ -178,6 +178,7 @@ class HomeActivity : AppCompatActivity() {
             Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show()
         }
         textPair.setOnClickListener {
+            PRESSED=cameraNum
             readBarcode()
         }
     }

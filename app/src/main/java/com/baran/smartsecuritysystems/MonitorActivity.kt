@@ -99,8 +99,7 @@ class MonitorActivity : AppCompatActivity() {
         // Stop remote video rendering.
         if (remoteSurfaceView != null) remoteSurfaceView!!.visibility = View.GONE
         // Stop local video rendering.
-        if (localSurfaceView != null) localSurfaceView!!.visibility = View.GONE
-        finish()
+        //if (localSurfaceView != null) localSurfaceView!!.visibility = View.GONE
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,11 +115,13 @@ class MonitorActivity : AppCompatActivity() {
         }
         binding.monBack.setOnClickListener{
             leaveChannel()
+            finish()
         }
         if (!checkSelfPermission()) {
             ActivityCompat.requestPermissions(this, requestedPermissions, permissionReqID);
         }
-        setupVideoSDKEngine();
+
+        setupVideoSDKEngine()
 
     }
     override fun onDestroy() {

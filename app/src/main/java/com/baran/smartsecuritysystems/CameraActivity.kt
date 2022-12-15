@@ -36,7 +36,7 @@ class CameraActivity : AppCompatActivity(){
     private var database: DatabaseReference = Firebase.database.reference
 
 
-    private val channelName = appID // Fill the channel name.
+    private val channelName = deviceId // Fill the channel name.
     private val uid = 0 // An integer that identifies the local user.
 
     private var agoraEngine: RtcEngine? = null
