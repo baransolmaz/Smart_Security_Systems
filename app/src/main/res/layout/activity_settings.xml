@@ -53,10 +53,24 @@
                 android:id="@+id/settings_plan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
                 android:text="Change Plan"
                 android:textAlignment="center"
                 android:textColor="@color/dark_cyan"
                 android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/settings_delete_acc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:text="Delete Account"
+                android:textAlignment="center"
+                android:textColor="@color/dark_cyan"
+                android:textSize="18sp" />
+
         </LinearLayout>
     </ScrollView>
 
