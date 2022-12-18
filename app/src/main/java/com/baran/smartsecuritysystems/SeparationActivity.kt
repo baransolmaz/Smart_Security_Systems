@@ -26,9 +26,9 @@ class SeparationActivity : AppCompatActivity() {
         supportActionBar?.hide()
         window.decorView.systemUiVisibility= View.SYSTEM_UI_FLAG_FULLSCREEN
 
-        val camera0=Camera(1,"e","e")
-        val camera1=Camera(2,"e","e")
-        val camera2=Camera(3,"e","e")
+        val camera0=Camera(1,"e","e","e")
+        val camera1=Camera(2,"e","e","e")
+        val camera2=Camera(3,"e","e","e")
 
         val device=Device(deviceId,0, mapOf(Pair(camera0.num.toString(),camera0),Pair(camera1.num.toString(),camera1),Pair(camera2.num.toString(),camera2)))
         binding= ActivitySeparationBinding.inflate(layoutInflater)
@@ -38,7 +38,7 @@ class SeparationActivity : AppCompatActivity() {
             device.type=-1
             device.cameras=null
             try {
-                device.token =generateToken()
+                device.token =generateToken(appID,appCer,deviceId)
             }catch (e :Exception){
                 Toast.makeText(this@SeparationActivity,e.toString(),Toast.LENGTH_LONG).show()
             }
@@ -63,14 +63,14 @@ class SeparationActivity : AppCompatActivity() {
         }
     }
 
-    private fun generateToken(): String {
-        val expirationTimeInSeconds = 12 * 60 * 60//12 saat-1 sn
+    fun generateToken(AppID:String,AppCer:String,DevID:String): String {
+        val expirationTimeInSeconds = 24 * 60 * 60//24 saat-1 sn
         val token = RtcTokenBuilder2()
         val timestamp = (System.currentTimeMillis() / 1000 + expirationTimeInSeconds-1).toInt()
         return token.buildTokenWithUid(
-            appID,
-            appCer,
-            deviceId,
+            AppID,
+            AppCer,
+            DevID,
             0,
             RtcTokenBuilder2.Role.ROLE_PUBLISHER,
             timestamp,timestamp)

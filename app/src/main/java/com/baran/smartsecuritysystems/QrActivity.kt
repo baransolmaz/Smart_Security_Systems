@@ -14,6 +14,7 @@ class QrActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQrBinding
     private var deviceId: String = MainActivity.DEVICE_ID
     private var token: String = MainActivity.TOKEN
+    private var username: String = MainActivity.USERNAME
     lateinit var bitmap: Bitmap
 
     @Suppress("DEPRECATION")
@@ -31,7 +32,7 @@ class QrActivity : AppCompatActivity() {
         try {
             val barcodeEncoder = BarcodeEncoder()
             val screenWidth = resources.displayMetrics.widthPixels
-            bitmap = barcodeEncoder.encodeBitmap("$deviceId::$token",BarcodeFormat.QR_CODE, screenWidth,screenWidth)
+            bitmap = barcodeEncoder.encodeBitmap("$username::$deviceId::$token",BarcodeFormat.QR_CODE, screenWidth,screenWidth)
             qrImage.setImageBitmap(bitmap)
         } catch (e: WriterException) {
             Log.e("generateQR()", e.message.toString())

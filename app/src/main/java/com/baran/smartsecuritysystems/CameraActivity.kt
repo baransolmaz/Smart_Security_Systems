@@ -22,7 +22,6 @@ import io.agora.rtc2.video.VideoCanvas
 class CameraActivity : AppCompatActivity(){
     companion object {
         private const val CAMERA_PERMISSION_CODE = 100
-        private const val REQUEST_CODE = 100
     }
     private lateinit var binding: ActivityCameraBinding
 
@@ -83,6 +82,7 @@ class CameraActivity : AppCompatActivity(){
             showMessage("Remote user offline $uid $reason")
             runOnUiThread { remoteSurfaceView!!.visibility = View.GONE }
         }
+
     }
     private fun setupLocalVideo() {
         val container = binding.cameraFrame

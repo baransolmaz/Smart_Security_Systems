@@ -28,6 +28,7 @@ class HomeActivity : AppCompatActivity() {
 
     private var resultQR:String?=null
     companion object{
+        var USERNAMES= Array<String?>(3){null}
         var CHANNELS= Array<String?>(3){null}
         var TOKENS= Array<String?>(3){null}
         var PRESSED =-1
@@ -45,14 +46,17 @@ class HomeActivity : AppCompatActivity() {
         database.child("Users").child(userName).child("devices").child(deviceId).child("cameras").addListenerForSingleValueEvent( object :ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.hasChild("1")) {
+                    USERNAMES[0]= dataSnapshot.child("1").child("user").value.toString()
                     CHANNELS[0]= dataSnapshot.child("1").child("devID").value.toString()
                     TOKENS[0]= dataSnapshot.child("1").child("token").value.toString()
                 }
                 if (dataSnapshot.hasChild("2")) {
+                    USERNAMES[1]= dataSnapshot.child("2").child("user").value.toString()
                     CHANNELS[1]= dataSnapshot.child("2").child("devID").value.toString()
                     TOKENS[1]= dataSnapshot.child("2").child("token").value.toString()
                 }
                 if (dataSnapshot.hasChild("3")) {
+                    USERNAMES[2]= dataSnapshot.child("3").child("user").value.toString()
                     CHANNELS[2]= dataSnapshot.child("3").child("devID").value.toString()
                     TOKENS[2]= dataSnapshot.child("3").child("token").value.toString()
                 }
@@ -77,22 +81,13 @@ class HomeActivity : AppCompatActivity() {
                 Log.d("error", databaseError.message)
             }
         })
-        /*binding.textPair1.setOnClickListener{
-            readBarcode()
-        }
-        binding.textPair2.setOnClickListener{
-            readBarcode()
-        }
-        binding.textPair3.setOnClickListener{
-            readBarcode()
-        }*/
 
-        /*val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
+        val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
         navBarHome.setOnClickListener{
             val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
             finish()
-        }*/
+        }
         val navBarProfile=findViewById<BottomNavigationItemView>(R.id.profile_nav)
         navBarProfile.setOnClickListener{
             val intent = Intent(this, ProfileActivity::class.java)
@@ -115,17 +110,13 @@ class HomeActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Scanned", Toast.LENGTH_LONG).show()
                 resultQR=result.contents.toString()
-                for(i in CHANNELS.indices){
-                    if (CHANNELS[i]=="e"){
-                        val arr= resultQR!!.split("::")
-                        val camera=Camera(i,arr[0],arr[1])
-                        database.child("Users").child(userName).child("devices").child(deviceId).child("cameras").child((i+1).toString()).setValue(camera).addOnSuccessListener {
-                            refresh()
-                        }.addOnFailureListener {
-                            Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show()
-                        }
-                        break
-                    }
+
+                val arr= resultQR!!.split("::")
+                val camera=Camera(PRESSED,arr[0],arr[1],arr[2])
+                database.child("Users").child(userName).child("devices").child(deviceId).child("cameras").child((PRESSED+1).toString()).setValue(camera).addOnSuccessListener {
+                    refresh()
+                }.addOnFailureListener {
+                    Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -171,7 +162,7 @@ class HomeActivity : AppCompatActivity() {
         textPair.text="Pair Cam"
         CHANNELS[cameraNum]="e"
         TOKENS[cameraNum]="e"
-        val camera=Camera(cameraNum, CHANNELS[cameraNum], TOKENS[cameraNum])
+        val camera=Camera(cameraNum,"e", CHANNELS[cameraNum], TOKENS[cameraNum])
         database.child("Users").child(userName).child("devices").child(deviceId).child("cameras").child((cameraNum+1).toString()).setValue(camera).addOnSuccessListener {
             //refresh()
         }.addOnFailureListener {
