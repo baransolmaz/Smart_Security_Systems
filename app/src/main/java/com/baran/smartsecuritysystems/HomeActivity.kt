@@ -147,11 +147,32 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, ArchiveActivity::class.java)
             startActivity(intent)
         }
+        TOKENS[cameraNum]=checkTokenValidation(USERNAMES[cameraNum], CHANNELS[cameraNum], TOKENS[cameraNum])
         textPair.text="Unpair Cam"
         textPair.setOnClickListener {
             setDisable(cameraNum,textLive,textArc,textPair)
         }
     }
+
+    private fun checkTokenValidation(username: String?, devID: String?, currentToken: String?): String? {
+        var token: String? =currentToken
+        if (username != null && devID != null) {
+            database.child("Users").child(username).child("devices").child(devID).child("token").addListenerForSingleValueEvent( object :ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    token=dataSnapshot.value.toString()
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.d("error", databaseError.message)
+                }
+            })
+        }
+        return if (currentToken==token){
+            currentToken
+        }else
+            token
+    }
+
     @SuppressLint("SetTextI18n")
     fun setDisable(cameraNum: Int,textLive: TextView, textArc: TextView, textPair: TextView) {
         textLive.setTextColor(ContextCompat.getColor(this,R.color.dark_cyan))
