@@ -25,6 +25,7 @@ class MonitorActivity : AppCompatActivity() {
     private var camNum: Int =HomeActivity.PRESSED //Camera Number
     private var token: String? = HomeActivity.TOKENS[camNum]
     private var channelName: String? = HomeActivity.CHANNELS[camNum]
+    private var userName: String? = HomeActivity.USERNAMES[camNum]
 
     private lateinit var cameraFrame: FrameLayout
     private val uid = 0     // An integer that identifies the local user.
@@ -60,6 +61,10 @@ class MonitorActivity : AppCompatActivity() {
         override fun onUserOffline(uid: Int, reason: Int) {
             showMessage("Remote user offline $uid $reason")
             runOnUiThread { remoteSurfaceView!!.visibility = View.GONE }
+        }
+        override fun onTokenPrivilegeWillExpire(token: String?) {
+            showMessage("Token Will Expire")
+            super.onTokenPrivilegeWillExpire(token)
         }
     }
     private fun setupRemoteVideo(uid: Int) {
