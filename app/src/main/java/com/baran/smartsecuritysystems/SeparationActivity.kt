@@ -13,7 +13,20 @@ import io.agora.media.RtcTokenBuilder2
 
 class SeparationActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySeparationBinding
-
+    companion object{
+        fun generateToken(AppID:String,AppCer:String,DevID:String): String {
+            val expirationTimeInSeconds = 24 * 60 * 60//24 saat-1 sn
+            val token = RtcTokenBuilder2()
+            val timestamp = (System.currentTimeMillis() / 1000 + expirationTimeInSeconds-1).toInt()
+            return token.buildTokenWithUid(
+                AppID,
+                AppCer,
+                DevID,
+                0,
+                RtcTokenBuilder2.Role.ROLE_PUBLISHER,
+                timestamp,timestamp)
+        }
+    }
     private var userName: String=MainActivity.USERNAME
     private var deviceId: String = MainActivity.DEVICE_ID
     private var appID : String=MainActivity.APP_ID // Fill the App ID of your project generated on Agora Console.
@@ -63,17 +76,6 @@ class SeparationActivity : AppCompatActivity() {
         }
     }
 
-    fun generateToken(AppID:String,AppCer:String,DevID:String): String {
-        val expirationTimeInSeconds = 24 * 60 * 60//24 saat-1 sn
-        val token = RtcTokenBuilder2()
-        val timestamp = (System.currentTimeMillis() / 1000 + expirationTimeInSeconds-1).toInt()
-        return token.buildTokenWithUid(
-            AppID,
-            AppCer,
-            DevID,
-            0,
-            RtcTokenBuilder2.Role.ROLE_PUBLISHER,
-            timestamp,timestamp)
-    }
+
 
 }
