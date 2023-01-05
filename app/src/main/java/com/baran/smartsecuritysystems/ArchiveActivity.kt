@@ -2,19 +2,19 @@ package com.baran.smartsecuritysystems
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.baran.smartsecuritysystems.databinding.ActivityArchiveBinding
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 
-
 class ArchiveActivity : AppCompatActivity() {
     private var camNum: Int =HomeActivity.PRESSED //Camera Number
     private var deviceID: String? = HomeActivity.CHANNELS[camNum]
     private lateinit var binding: ActivityArchiveBinding
-    private var storage : StorageReference = Firebase.storage.reference.child(deviceID.toString())
-    private lateinit var imageList:ArrayList<String>
+    private var storage : StorageReference = Firebase.storage.reference
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,8 +22,33 @@ class ArchiveActivity : AppCompatActivity() {
         window.decorView.systemUiVisibility= View.SYSTEM_UI_FLAG_FULLSCREEN
         binding= ActivityArchiveBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val rec=binding.rec
 
+        val recyclerView = binding.rec
+        val layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = layoutManager
+        val images = ArrayList<String>()
+        val adapter = ImageAdapter(images,this)
+        //recyclerView.adapter = adapter
+        val progressBar=binding.progress
+        progressBar.visibility = View.VISIBLE
+        // Retrieve a list of images from Firebase Storage and convert them to Bitmaps
         val listRef = storage.child(deviceID.toString())
+
+        listRef.listAll().addOnSuccessListener { listResult ->
+            if(listResult.items.isEmpty()){
+                progressBar.visibility = View.GONE
+                Toast.makeText(this,"No Image Found",Toast.LENGTH_LONG).show()
+            }else
+                for (file in listResult.items) {
+                    file.downloadUrl.addOnSuccessListener { uri ->
+                        images.add(uri.toString())
+                        //Log.i("Item value", uri.toString())
+                    }.addOnSuccessListener {
+                        recyclerView.adapter = adapter
+                        progressBar.visibility = View.GONE
+                    }
+                }
+        }
+
     }
 }
