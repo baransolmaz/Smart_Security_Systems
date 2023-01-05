@@ -8,29 +8,26 @@ import android.graphics.Color
 import android.graphics.Matrix
 import android.hardware.camera2.*
 import android.os.Bundle
-import android.os.Environment
 import android.view.SurfaceView
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.baran.smartsecuritysystems.databinding.ActivityCameraBinding
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
 import com.google.firebase.storage.ktx.storage
 import io.agora.base.VideoFrame
 import io.agora.rtc2.*
 import io.agora.rtc2.video.IVideoFrameObserver
 import io.agora.rtc2.video.VideoCanvas
 import java.io.ByteArrayOutputStream
-import java.io.File
 import kotlin.concurrent.thread
 import kotlin.math.abs
+
 
 @Suppress("DEPRECATION")
 class CameraActivity : AppCompatActivity(){
@@ -44,7 +41,7 @@ class CameraActivity : AppCompatActivity(){
     private var userName: String=MainActivity.USERNAME
     private var deviceId: String= MainActivity.DEVICE_ID
     private var appID : String=MainActivity.APP_ID // Fill the App ID of your project generated on Agora Console.
-    private val token : String = MainActivity.TOKEN
+    private var token : String = MainActivity.TOKEN
 
     private val channelName = deviceId // Fill the channel name.
     private val uid = 0 // An integer that identifies the local user.
@@ -165,23 +162,17 @@ class CameraActivity : AppCompatActivity(){
     ///
 
     private fun saveBitmap2Gallery(newBitmap: Bitmap?) {
-        val en= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path+"/SSS"
+        /*val en= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).path+"/SSS"
         val f = File(en)
         if (!f.exists())
-            f.mkdir()
+            f.mkdir()*/
         val name =System.currentTimeMillis().toString()
         /*val outputStream = FileOutputStream("$en/$name.jpg")
         newBitmap?.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
         outputStream.close()*/
         val byteOutputStream = ByteArrayOutputStream()
         newBitmap?.compress(Bitmap.CompressFormat.PNG, 90, byteOutputStream)
-        storage.child(deviceId).child(name).putBytes(byteOutputStream.toByteArray()).addOnSuccessListener(
-                OnSuccessListener<UploadTask.TaskSnapshot?> { // Image uploaded successfully
-
-                })
-            .addOnFailureListener(OnFailureListener {   // Error, Image not uploaded
-
-            })
+        storage.child(deviceId).child(name).putBytes(byteOutputStream.toByteArray())
     }
     private fun checkSelfPermission(): Boolean {
         return !(ContextCompat.checkSelfPermission(this,requestedPermissions[0]) != PackageManager.PERMISSION_GRANTED ||
@@ -192,6 +183,7 @@ class CameraActivity : AppCompatActivity(){
             val config = RtcEngineConfig()
             config.mContext = baseContext
             config.mAppId = appID
+            //mRtcEventHandler.onRequestToken()
             config.mEventHandler = mRtcEventHandler
             agoraEngine = RtcEngine.create(config)
             // By default, the video module is disabled, call enableVideo to enable it.
@@ -200,11 +192,20 @@ class CameraActivity : AppCompatActivity(){
             showMessage(e.toString())
         }
     }
-
     private val mRtcEventHandler: IRtcEngineEventHandler = object : IRtcEngineEventHandler() {
+        /*override fun onRequestToken() {
+            Log.i("KKK","reqToken")
+            setToken(SeparationActivity.generateToken(MainActivity.APP_ID,MainActivity.APP_CER,MainActivity.DEVICE_ID))
+            super.onRequestToken()
+        }
+        override fun onTokenPrivilegeWillExpire(token: String) {
+            showMessage("Token Will Expire")
+            Log.i("KKK","TokenPrivy")
+            super.onTokenPrivilegeWillExpire(setToken(SeparationActivity.generateToken(MainActivity.APP_ID,MainActivity.APP_CER,MainActivity.DEVICE_ID)))
+        }*/
         // Listen for the remote host joining the channel to get the uid of the host.
         override fun onUserJoined(uid: Int, elapsed: Int) {
-            //showMessage("Remote user joined $uid")
+            showMessage("Remote user joined $uid")
             // Set the remote video view
             //runOnUiThread { setupRemoteVideo(uid) }
         }
@@ -215,17 +216,20 @@ class CameraActivity : AppCompatActivity(){
 
         override fun onUserOffline(uid: Int, reason: Int) {
             showMessage("Remote user offline $uid $reason")
-            runOnUiThread { remoteSurfaceView!!.visibility = View.GONE }
+            //runOnUiThread { remoteSurfaceView!!.visibility = View.GONE }
+            setToken(SeparationActivity.generateToken(MainActivity.APP_ID,MainActivity.APP_CER,MainActivity.DEVICE_ID))
         }
-        override fun onTokenPrivilegeWillExpire(token: String?) {
-            showMessage("Token Will Expire")
-            super.onTokenPrivilegeWillExpire(token)
-            val newToken=SeparationActivity.generateToken(MainActivity.APP_ID,MainActivity.APP_CER,MainActivity.DEVICE_ID)
-            agoraEngine?.renewToken(newToken)
-            database.child("Users").child(userName).child("devices").child(deviceId).child("token").setValue(newToken)
-        }
+
     }
 
+    fun setToken(newValue: String):String {
+        token = newValue
+        MainActivity.TOKEN=token
+        database.child("Users").child(userName).child("devices").child(deviceId).child("token").setValue(token)
+        agoraEngine!!.renewToken(token)
+        showMessage("Token renewed")
+        return newValue
+    }
     private fun setupLocalVideo() {
         val container = binding.cameraFrame
         // Create a SurfaceView object and add it as a child to the FrameLayout.
@@ -249,12 +253,19 @@ class CameraActivity : AppCompatActivity(){
             agoraEngine!!.disableAudio()
             // Join the channel with a temp token.
             // You need to specify the user ID yourself, and ensure that it is unique in the channel.
-            //////
+
             agoraEngine!!.registerVideoFrameObserver(videoFrameObserver)
-            ///////
+
             agoraEngine!!.joinChannel(token, channelName, uid, options)
         } else {
             Toast.makeText(applicationContext, "Permissions was not granted", Toast.LENGTH_SHORT).show()
+
+        }
+    }
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            // Requesting the permission
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
         }
     }
     @Suppress("DEPRECATION")
@@ -279,6 +290,7 @@ class CameraActivity : AppCompatActivity(){
             val intent=Intent(this,QrActivity::class.java)
             startActivity(intent)
         }
+        checkPermission()
 
         setupVideoSDKEngine()
     }
@@ -286,10 +298,9 @@ class CameraActivity : AppCompatActivity(){
         super.onDestroy()
         agoraEngine!!.stopPreview()
         agoraEngine!!.leaveChannel()
-        /////
         // Stop the frame loop and release resources
         referenceBitmap = null
-        ///
+
         // Destroy the engine in a sub-thread to avoid congestion
         Thread {
             RtcEngine.destroy()

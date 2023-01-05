@@ -1,13 +1,23 @@
 package com.baran.smartsecuritysystems
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.baran.smartsecuritysystems.databinding.ActivityHomeBinding
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
@@ -33,6 +43,12 @@ class HomeActivity : AppCompatActivity() {
         var TOKENS= Array<String?>(3){null}
         var PRESSED =-1
     }
+    //Notification
+    private lateinit var notificationManager: NotificationManager
+    private lateinit var notificationChannel: NotificationChannel
+    private lateinit var builder: Notification.Builder
+    private val channelId = "i.apps.notifications"
+    private val description = "Motion Notification"
 
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +59,8 @@ class HomeActivity : AppCompatActivity() {
 
         binding= ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        checkPermission()
+        giveNotification(8)
         database.child("Users").child(userName).child("devices").child(deviceId).child("cameras").addListenerForSingleValueEvent( object :ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.hasChild("1")) {
@@ -82,24 +100,29 @@ class HomeActivity : AppCompatActivity() {
             }
         })
 
-        val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
+        /*val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
         navBarHome.setOnClickListener{
             val intent = Intent(this, HomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             startActivity(intent)
-            finish()
-        }
+        }*/
         val navBarProfile=findViewById<BottomNavigationItemView>(R.id.profile_nav)
         navBarProfile.setOnClickListener{
             val intent = Intent(this, ProfileActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             startActivity(intent)
         }
         val navBarSettings=findViewById<BottomNavigationItemView>(R.id.settings_nav)
         navBarSettings.setOnClickListener{
             val intent = Intent(this, SettingsActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             startActivity(intent)
         }
     }
-
+    override fun onResume() {
+        super.onResume()
+        overridePendingTransition(1,0)
+    }
     @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?){
         super.onActivityResult(requestCode, resultCode, data)
@@ -139,6 +162,7 @@ class HomeActivity : AppCompatActivity() {
         textPair.setTextColor(ContextCompat.getColor(this,R.color.light_cyan))
         textLive.setOnClickListener {
             PRESSED=cameraNum
+            checkTokenValidation(USERNAMES[cameraNum].toString(), CHANNELS[cameraNum].toString(),cameraNum)
             val intent = Intent(this, MonitorActivity::class.java)
             startActivity(intent)
         }
@@ -147,32 +171,32 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, ArchiveActivity::class.java)
             startActivity(intent)
         }
-        TOKENS[cameraNum]=checkTokenValidation(USERNAMES[cameraNum], CHANNELS[cameraNum], TOKENS[cameraNum])
+        checkTokenValidation(USERNAMES[cameraNum].toString(), CHANNELS[cameraNum].toString(),cameraNum)
         textPair.text="Unpair Cam"
         textPair.setOnClickListener {
             setDisable(cameraNum,textLive,textArc,textPair)
         }
     }
 
-    private fun checkTokenValidation(username: String?, devID: String?, currentToken: String?): String? {
-        var token: String? =currentToken
-        if (username != null && devID != null) {
-            database.child("Users").child(username).child("devices").child(devID).child("token").addListenerForSingleValueEvent( object :ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    token=dataSnapshot.value.toString()
-                }
+    private fun checkTokenValidation(username: String, devID: String, cameraNum: Int) {
+        database.child("Users").child(username).child("devices").child(devID).child("token").addListenerForSingleValueEvent( object :ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                TOKENS[cameraNum]=dataSnapshot.value.toString()
+                database.child("Users").child(userName).child("devices").child(deviceId).child("cameras").child((cameraNum+1).toString()).child("token").setValue(
+                    TOKENS[cameraNum])
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.d("error", databaseError.message)
+            }
+        })
 
-                override fun onCancelled(databaseError: DatabaseError) {
-                    Log.d("error", databaseError.message)
-                }
-            })
-        }
-        return if (currentToken==token){
-            currentToken
-        }else
-            token
     }
-
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            // Requesting the permission
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
+        }
+    }
     @SuppressLint("SetTextI18n")
     fun setDisable(cameraNum: Int,textLive: TextView, textArc: TextView, textPair: TextView) {
         textLive.setTextColor(ContextCompat.getColor(this,R.color.dark_cyan))
@@ -199,6 +223,29 @@ class HomeActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+    private fun giveNotification(cameraNum: Int) {
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        // checking if android version is greater than oreo(API 26) or not
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationChannel = NotificationChannel(channelId, description, NotificationManager.IMPORTANCE_HIGH)
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.GREEN
+            notificationChannel.enableVibration(false)
+            notificationManager.createNotificationChannel(notificationChannel)
 
+            builder = Notification.Builder(this, channelId)
+                .setSmallIcon(R.drawable.home_icon)
+                .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.mipmap.ic_launcher))
+                .setContentTitle("Alert!!")
+                .setContentText("Motion Detected At Camera$cameraNum !!")
+        } else {
+            builder = Notification.Builder(this)
+                .setSmallIcon(R.drawable.home_icon)
+                .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.mipmap.ic_launcher))
+                .setContentTitle("Alert!!")
+                .setContentText("Motion Detected At Camera$cameraNum !!")
+        }
+        notificationManager.notify(cameraNum, builder.build())
+    }
 
 }
