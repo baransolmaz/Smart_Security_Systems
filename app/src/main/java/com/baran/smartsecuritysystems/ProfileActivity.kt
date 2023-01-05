@@ -17,7 +17,7 @@ import com.google.firebase.ktx.Firebase
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
     private var userName: String =MainActivity.USERNAME
-    private var deviceId: String = MainActivity.DEVICE_ID
+    //private var deviceId: String = MainActivity.DEVICE_ID
     private var database: DatabaseReference = Firebase.database.reference
 
     @Suppress("DEPRECATION")
@@ -55,8 +55,8 @@ class ProfileActivity : AppCompatActivity() {
         val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
         navBarHome.setOnClickListener{
             val intent = Intent(this, HomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             startActivity(intent)
-            finish()
         }
         /*val navBarProfile=findViewById<BottomNavigationItemView>(R.id.profile_nav)
         navBarProfile.setOnClickListener{
@@ -67,8 +67,12 @@ class ProfileActivity : AppCompatActivity() {
         val navBarSettings=findViewById<BottomNavigationItemView>(R.id.settings_nav)
         navBarSettings.setOnClickListener{
             val intent = Intent(this, SettingsActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             startActivity(intent)
-            finish()
         }
+    }
+    override fun onResume() {
+        super.onResume()
+        overridePendingTransition(1,0)
     }
 }
