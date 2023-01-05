@@ -15,7 +15,8 @@ class SeparationActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySeparationBinding
     companion object{
         fun generateToken(AppID:String,AppCer:String,DevID:String): String {
-            val expirationTimeInSeconds = 24 * 60 * 60//24 saat-1 sn
+            //val expirationTimeInSeconds = 24 * 60 * 60//24 saat-1 sn
+            val expirationTimeInSeconds = 1 * 60//5dk
             val token = RtcTokenBuilder2()
             val timestamp = (System.currentTimeMillis() / 1000 + expirationTimeInSeconds-1).toInt()
             return token.buildTokenWithUid(
