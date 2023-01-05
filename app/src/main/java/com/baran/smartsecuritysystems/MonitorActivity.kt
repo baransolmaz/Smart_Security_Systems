@@ -1,6 +1,7 @@
 package com.baran.smartsecuritysystems
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.SurfaceView
@@ -123,11 +124,17 @@ class MonitorActivity : AppCompatActivity() {
             finish()
         }
         if (!checkSelfPermission()) {
-            ActivityCompat.requestPermissions(this, requestedPermissions, permissionReqID);
+            ActivityCompat.requestPermissions(this, requestedPermissions, permissionReqID)
+            refresh()
         }
 
         setupVideoSDKEngine()
 
+    }
+    private fun refresh() {
+        val intent = Intent(applicationContext, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
     override fun onDestroy() {
         super.onDestroy()
@@ -155,6 +162,5 @@ class MonitorActivity : AppCompatActivity() {
             Toast.makeText(applicationContext,message,Toast.LENGTH_SHORT).show()
         }
     }
-
 
 }
