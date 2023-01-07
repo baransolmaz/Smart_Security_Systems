@@ -38,16 +38,24 @@ class ArchiveActivity : AppCompatActivity() {
             if(listResult.items.isEmpty()){
                 progressBar.visibility = View.GONE
                 Toast.makeText(this,"No Image Found",Toast.LENGTH_LONG).show()
-            }else
-                for (file in listResult.items) {
-                    file.downloadUrl.addOnSuccessListener { uri ->
-                        images.add(uri.toString())
-                        //Log.i("Item value", uri.toString())
-                    }.addOnSuccessListener {
-                        recyclerView.adapter = adapter
-                        progressBar.visibility = View.GONE
+            }else{
+                for ((k, file) in listResult.items.reversed().withIndex()) {
+                    if(k<20){
+                        file.downloadUrl.addOnSuccessListener { uri ->
+                            images.add(uri.toString())
+                            //Log.i("Item value", uri.toString())
+                        }.addOnSuccessListener {
+                            recyclerView.adapter = adapter
+                            progressBar.visibility = View.GONE
+                        }
+                    }else {
+                        file.downloadUrl.addOnSuccessListener {
+                            storage.child(deviceID.toString()).child(file.name).delete()
+                        }
+                        MainActivity.sp.edit().putInt("size$camNum",listResult.items.size).apply()
                     }
                 }
+            }
         }
 
     }
