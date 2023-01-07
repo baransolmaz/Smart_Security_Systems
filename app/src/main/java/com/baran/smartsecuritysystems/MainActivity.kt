@@ -3,11 +3,13 @@ package com.baran.smartsecuritysystems
 import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.view.View
+import android.widget.CheckBox
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +22,10 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
     companion object {
@@ -30,11 +36,11 @@ class MainActivity : AppCompatActivity() {
         lateinit var TOKEN:String
         lateinit var DEVICE_ID:String
         lateinit var USERNAME:String
+        lateinit var sp:SharedPreferences
     }
-
     private lateinit var binding:ActivityMainBinding
     private var database: DatabaseReference =Firebase.database.reference
-
+    private  lateinit var checkbox:CheckBox
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +49,20 @@ class MainActivity : AppCompatActivity() {
 
         binding= ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        checkbox=binding.checkBox
+        sp=getSharedPreferences("login", MODE_PRIVATE)
 
         checkPermission()
+        if(sp.getBoolean("logged",false)){
+            APP_ID = sp.getString("appID","").toString()
+            APP_CER = sp.getString("appCer","").toString()
+            USERNAME= sp.getString("username","").toString()
+            DEVICE_ID=sp.getString("deviceID","").toString()
+            val type=sp.getString("type","").toString()
+            //if (sp.getBoolean("clear_Log",false))
+              //  clearLog()
+            separate(DEVICE_ID, USERNAME,type)
+        }
         binding.mainSignUp.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
@@ -82,17 +100,9 @@ class MainActivity : AppCompatActivity() {
                                 USERNAME=inputUsername
                                 if (dataSnapshot.child(inputUsername).child("devices").hasChild(id)){
                                     val type=dataSnapshot.child(inputUsername).child("devices").child(id).child("type").value.toString()
-                                    if(type == "-1") {//Camera
-                                        TOKEN=dataSnapshot.child(inputUsername).child("devices").child(id).child("token").value.toString()
-                                        val intent =Intent(this@MainActivity, CameraActivity::class.java)
-                                        startActivity(intent)
-                                    }else if (type== "1"){//Monitor
-                                        val intent =Intent(this@MainActivity, HomeActivity::class.java)
-                                        startActivity(intent)
-                                    }else{
-                                        val intent =Intent(this@MainActivity, SeparationActivity::class.java)
-                                        startActivity(intent)
-                                    }
+                                    stayLoggedIn()
+                                    sp.edit().putString("type",type).apply()
+                                    separate(id,inputUsername,type,dataSnapshot)
                                 }else{
                                     val intent =Intent(this@MainActivity, SeparationActivity::class.java)
                                     startActivity(intent)
@@ -111,6 +121,44 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    private fun clearLog() {
+        val logFile = File(this.filesDir,"Log.txt")
+        if (!logFile.exists()) {
+            logFile.createNewFile()
+        }
+        try{
+            //BufferedWriter for performance, true to set append to file flag
+            val buf = BufferedWriter(FileWriter(logFile, false))
+            buf.newLine()
+            buf.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+        sp.edit().putBoolean("clear_Log",false).apply()
+    }
+
+    private fun separate(id: String, inputUsername: String, type: String,dataSnapshot: DataSnapshot? =null) {
+        val intent:Intent
+        if(type == "-1") {//Camera
+            if (dataSnapshot != null) {
+                TOKEN=dataSnapshot.child(inputUsername).child("devices").child(id).child("token").value.toString()
+                sp.edit().putString("token", TOKEN).apply()
+            }else{
+                TOKEN=sp.getString("token","").toString()
+                database.child("Users").child(inputUsername).child("devices").child(id).child("token").get().addOnSuccessListener {
+                    TOKEN=it.value.toString()
+                }
+            }
+            intent =Intent(this@MainActivity, CameraActivity::class.java)
+        }else if (type== "1"){//Monitor
+            intent =Intent(this@MainActivity, HomeActivity::class.java)
+        }else{
+            intent =Intent(this@MainActivity, SeparationActivity::class.java)
+        }
+        startActivity(intent)
+    }
+
     // Function to check and request permission.
     private fun checkPermission() {
         if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -166,14 +214,24 @@ class MainActivity : AppCompatActivity() {
         layoutParams.weight = 10f
         btnPositive.layoutParams = layoutParams
     }
-    private fun refresh() {
+    /*private fun refresh() {
         val intent = Intent(applicationContext, MainActivity::class.java)
         startActivity(intent)
         finish()
-    }
+    }*/
     private fun clearInputs() {
         binding.mainUsername.text.clear()
         binding.mainPassword.text.clear()
         Toast.makeText(this@MainActivity,"Wrong username or password",Toast.LENGTH_SHORT).show()
+    }
+    private fun stayLoggedIn(){
+        if (checkbox.isChecked){
+            sp.edit().putBoolean("logged",true).apply()
+            sp.edit().putString("username",USERNAME).apply()
+        }else
+            sp.edit().putBoolean("logged",false).apply()
+        sp.edit().putString("deviceID",DEVICE_ID).apply()
+        sp.edit().putString("appID",APP_ID).apply()
+        sp.edit().putString("appCer",APP_CER).apply()
     }
 }
