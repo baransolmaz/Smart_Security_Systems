@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.Matrix
 import android.hardware.camera2.*
 import android.os.Bundle
+import android.util.Log
 import android.view.SurfaceView
 import android.view.View
 import android.widget.Toast
@@ -15,7 +16,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.baran.smartsecuritysystems.databinding.ActivityCameraBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -40,7 +44,7 @@ class CameraActivity : AppCompatActivity(){
 
     private var userName: String=MainActivity.USERNAME
     private var deviceId: String= MainActivity.DEVICE_ID
-    private var appID : String=MainActivity.APP_ID // Fill the App ID of your project generated on Agora Console.
+    private var appID : String= MainActivity.APP_ID // Fill the App ID of your project generated on Agora Console.
     private var token : String = MainActivity.TOKEN
 
     private val channelName = deviceId // Fill the channel name.
@@ -182,14 +186,14 @@ class CameraActivity : AppCompatActivity(){
         try {
             val config = RtcEngineConfig()
             config.mContext = baseContext
-            config.mAppId = appID
-            //mRtcEventHandler.onRequestToken()
+            config.mAppId = MainActivity.APP_ID
             config.mEventHandler = mRtcEventHandler
             agoraEngine = RtcEngine.create(config)
             // By default, the video module is disabled, call enableVideo to enable it.
             agoraEngine!!.enableVideo()
         } catch (e: Exception) {
             showMessage(e.toString())
+            //refresh()
         }
     }
     private val mRtcEventHandler: IRtcEngineEventHandler = object : IRtcEngineEventHandler() {
@@ -221,7 +225,6 @@ class CameraActivity : AppCompatActivity(){
         }
 
     }
-
     fun setToken(newValue: String):String {
         token = newValue
         MainActivity.TOKEN=token
@@ -259,7 +262,6 @@ class CameraActivity : AppCompatActivity(){
             agoraEngine!!.joinChannel(token, channelName, uid, options)
         } else {
             Toast.makeText(applicationContext, "Permissions was not granted", Toast.LENGTH_SHORT).show()
-
         }
     }
     private fun checkPermission() {
@@ -289,6 +291,13 @@ class CameraActivity : AppCompatActivity(){
          binding.camQr.setOnClickListener{
             val intent=Intent(this,QrActivity::class.java)
             startActivity(intent)
+         }
+        binding.camLogout.setOnClickListener {
+            MainActivity.sp.edit().putBoolean("logged",false).apply()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            startActivity(intent)
+            finish()
         }
         checkPermission()
 
@@ -320,9 +329,7 @@ class CameraActivity : AppCompatActivity(){
         }
     }
     private fun refresh(){
-        val i = Intent(intent)
-        startActivity(i)
-        finish()
+        finishAffinity()
     }
     fun showMessage(message: String?) {
         runOnUiThread {

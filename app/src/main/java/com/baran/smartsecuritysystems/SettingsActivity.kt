@@ -44,6 +44,13 @@ class SettingsActivity : AppCompatActivity() {
         binding.settingsChangeMail.setOnClickListener {
             askNewTxt("Mail")
         }
+        binding.settingsLogout.setOnClickListener {
+            MainActivity.sp.edit().putBoolean("logged",false).apply()
+            val intent = Intent(this, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            startActivity(intent)
+            finish()
+        }
 
         val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
         navBarHome.setOnClickListener{
@@ -77,6 +84,7 @@ class SettingsActivity : AppCompatActivity() {
         alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes") { _, _ ->
             database.child("Users").child(userName).removeValue()
             storage.child(deviceId).delete()
+            MainActivity.sp.edit().clear().apply()
             finishAffinity()
         }
 
