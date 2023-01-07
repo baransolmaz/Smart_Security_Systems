@@ -5,8 +5,10 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -27,15 +29,25 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import com.google.zxing.integration.android.IntentIntegrator
-
+import java.io.BufferedReader
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileReader
+import java.io.FileWriter
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.concurrent.thread
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private var database: DatabaseReference = Firebase.database.reference
     private var userName: String =MainActivity.USERNAME
     private var deviceId: String=MainActivity.DEVICE_ID
-
+    private var storage=FirebaseStorage.getInstance().reference
     private var resultQR:String?=null
     companion object{
         var USERNAMES= Array<String?>(3){null}
@@ -60,7 +72,7 @@ class HomeActivity : AppCompatActivity() {
         binding= ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         checkPermission()
-        giveNotification(8)
+
         database.child("Users").child(userName).child("devices").child(deviceId).child("cameras").addListenerForSingleValueEvent( object :ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.hasChild("1")) {
@@ -99,7 +111,7 @@ class HomeActivity : AppCompatActivity() {
                 Log.d("error", databaseError.message)
             }
         })
-
+        alertsInit()
         /*val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
         navBarHome.setOnClickListener{
             val intent = Intent(this, HomeActivity::class.java)
@@ -119,6 +131,31 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
     }
+
+    private fun alertsInit() {
+        val logFile = File(this.filesDir,"Log.txt")
+        if (!logFile.exists()) {
+            logFile.createNewFile()
+        }
+        try{
+            val buf = BufferedReader(FileReader(logFile))
+            val alertTexts=binding.alerts
+            do {
+                val text=buf.readLine()
+                if (text != null){
+                    val textView=TextView(this)
+                    textView.text=text.toString()
+                    textView.setTextColor(ContextCompat.getColor(this,R.color.light_cyan))
+                    alertTexts.addView(textView,0)
+                }
+              }while (text!=null)
+
+            buf.close()
+        }catch (e:IOException){
+            e.printStackTrace()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         overridePendingTransition(1,0)
@@ -176,8 +213,19 @@ class HomeActivity : AppCompatActivity() {
         textPair.setOnClickListener {
             setDisable(cameraNum,textLive,textArc,textPair)
         }
-    }
+        if (MainActivity.sp.getBoolean("logged",false)){
+            MainActivity.sp.edit().putBoolean("thread$cameraNum",true).apply()
+            startBackgroundTask(CHANNELS[cameraNum].toString(),cameraNum)
+        }
 
+
+        /*val i=Intent(this,NotificationService::class.java)
+        i.putExtra("cameraNum",cameraNum)
+        i.putExtra("devID",CHANNELS[cameraNum].toString())
+        i.putExtra("size", 0)
+
+        startService(i)*/
+    }
     private fun checkTokenValidation(username: String, devID: String, cameraNum: Int) {
         database.child("Users").child(username).child("devices").child(devID).child("token").addListenerForSingleValueEvent( object :ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -217,35 +265,116 @@ class HomeActivity : AppCompatActivity() {
             PRESSED=cameraNum
             readBarcode()
         }
+        MainActivity.sp.edit().putBoolean("thread$cameraNum",false).apply()
+
+        //stopService(Intent(this,NotificationService::class.java))
+        /*val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        jobScheduler.cancel(cameraNum)*/
     }
     private fun refresh() {
         val intent = Intent(applicationContext, HomeActivity::class.java)
         startActivity(intent)
         finish()
     }
+    @SuppressLint("UnspecifiedImmutableFlag")
     private fun giveNotification(cameraNum: Int) {
+        val notificationIntent = Intent(this, HomeActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT
+        )
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         // checking if android version is greater than oreo(API 26) or not
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationChannel = NotificationChannel(channelId, description, NotificationManager.IMPORTANCE_HIGH)
             notificationChannel.enableLights(true)
-            notificationChannel.lightColor = Color.GREEN
-            notificationChannel.enableVibration(false)
+            notificationChannel.lightColor = Color.RED
+            notificationChannel.enableVibration(true)
             notificationManager.createNotificationChannel(notificationChannel)
 
             builder = Notification.Builder(this, channelId)
                 .setSmallIcon(R.drawable.home_icon)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.mipmap.ic_launcher))
+                .setContentIntent(pendingIntent)
                 .setContentTitle("Alert!!")
-                .setContentText("Motion Detected At Camera$cameraNum !!")
+                .setContentText("Motion Detected At Camera-$cameraNum !!")
         } else {
             builder = Notification.Builder(this)
                 .setSmallIcon(R.drawable.home_icon)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources,R.mipmap.ic_launcher))
+                .setContentIntent(pendingIntent)
                 .setContentTitle("Alert!!")
-                .setContentText("Motion Detected At Camera$cameraNum !!")
+                .setContentText("Motion Detected At Camera-$cameraNum !!")
         }
         notificationManager.notify(cameraNum, builder.build())
+    }
+    @SuppressLint("SimpleDateFormat")
+    private fun checkFileSize(sp: SharedPreferences, storageRef: StorageReference, devID: String, num: Int) {
+        var size=sp.getInt("size$num",0)
+        storageRef.child(devID).listAll().addOnSuccessListener { listResult ->
+            if(listResult.items.isNotEmpty()){
+                if(listResult.items.size != size){
+                    giveNotification(num)
+                    sp.edit().putInt("size$num",listResult.items.size).apply()
+                    val formatter=SimpleDateFormat("HH:mm:ss dd/MM/yyyy", Locale.getDefault()).format(Calendar.getInstance().time)
+                    appendLog(num,formatter)
+                }
+                size=listResult.items.size
+            }
+        }
+    }
+    private fun startBackgroundTask(devID:String,cameraNum: Int) {
+        if (MainActivity.sp.getBoolean("logged",false)) {
+            thread(start = true,isDaemon = true){
+                val storageRef=storage
+                val sp=MainActivity.sp
+                while (sp.getBoolean("thread$cameraNum", false)) {
+                    checkFileSize(sp,storageRef,devID, cameraNum)
+                    Thread.sleep(10000) // check every 10 seconds
+                }
+            }
+        }
+    }
+    private fun alertThread(){
+        val logFile = File(this.filesDir,"Log.txt")
+        if (!logFile.exists()) {
+            logFile.createNewFile()
+        }
+        try{
+            val buf = BufferedReader(FileReader(logFile))
+            val text=buf.readLine()
+            val alertTexts=binding.alerts
+            val textView=TextView(this)
+            textView.text=text.toString()
+            textView.setTextColor(ContextCompat.getColor(this,R.color.light_cyan))
+            alertTexts.addView(textView)
+            buf.close()
+        }catch (e:IOException){
+            e.printStackTrace()
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun appendLog(num: Int, time: String){
+        val logFile = File(this.filesDir,"Log.txt")
+        if (!logFile.exists()) {
+            logFile.createNewFile()
+        }
+        try{
+            val textV=binding.alerts
+            //BufferedWriter for performance, true to set append to file flag
+            val buf = BufferedWriter(FileWriter(logFile, true))
+            buf.append("$time -- Camera $num")
+            val textView=TextView(this)
+            textView.text= "$time -- Camera $num"
+            textView.setTextColor(ContextCompat.getColor(this,R.color.light_cyan))
+            textV.addView(textView,0)
+
+            buf.newLine()
+            buf.close()
+        }catch (e:IOException){
+            e.printStackTrace()
+        }
+
     }
 
 }
