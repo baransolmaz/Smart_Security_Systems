@@ -6,7 +6,6 @@ import android.renderscript.*
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.nio.ByteBuffer
-import java.security.AccessControlContext
 
 object YUVUtils {
     fun encodeI420(i420: ByteArray, argb: IntArray, width: Int, height: Int) {

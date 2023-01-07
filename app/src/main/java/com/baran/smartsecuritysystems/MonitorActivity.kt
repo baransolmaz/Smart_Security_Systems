@@ -12,26 +12,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.baran.smartsecuritysystems.databinding.ActivityMonitorBinding
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import io.agora.rtc2.*
 import io.agora.rtc2.video.VideoCanvas
 
 class MonitorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMonitorBinding
-    private var database: DatabaseReference = Firebase.database.reference
+    //private var database: DatabaseReference = Firebase.database.reference
 
     private var appID: String=MainActivity.APP_ID
     private var camNum: Int =HomeActivity.PRESSED //Camera Number
     private var token: String? = HomeActivity.TOKENS[camNum]
     private var channelName: String? = HomeActivity.CHANNELS[camNum]
-    private var userName: String? = HomeActivity.USERNAMES[camNum]
+    //private var userName: String? = HomeActivity.USERNAMES[camNum]
 
     private lateinit var cameraFrame: FrameLayout
     private val uid = 0     // An integer that identifies the local user.
     private var agoraEngine: RtcEngine? = null
-    private var localSurfaceView: SurfaceView? = null     //SurfaceView to render local video in a Container.
+    //private var localSurfaceView: SurfaceView? = null     //SurfaceView to render local video in a Container.
     private var remoteSurfaceView: SurfaceView? = null  //SurfaceView to render Remote video in a Container.
 
     private fun setupVideoSDKEngine() {
@@ -107,6 +104,7 @@ class MonitorActivity : AppCompatActivity() {
         // Stop local video rendering.
         //if (localSurfaceView != null) localSurfaceView!!.visibility = View.GONE
     }
+    @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()

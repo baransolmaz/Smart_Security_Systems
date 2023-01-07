@@ -15,7 +15,7 @@ class QrActivity : AppCompatActivity() {
     private var deviceId: String = MainActivity.DEVICE_ID
     private var token: String = MainActivity.TOKEN
     private var username: String = MainActivity.USERNAME
-    lateinit var bitmap: Bitmap
+    private lateinit var bitmap: Bitmap
 
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,8 +26,8 @@ class QrActivity : AppCompatActivity() {
         binding=ActivityQrBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        var qrImage=binding.qrImage
-        var closeBut=binding.closeBut
+        val qrImage=binding.qrImage
+        val closeBut=binding.closeBut
 
         try {
             val barcodeEncoder = BarcodeEncoder()
