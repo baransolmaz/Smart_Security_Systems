@@ -12,12 +12,16 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -72,7 +76,7 @@ class HomeActivity : AppCompatActivity() {
         binding= ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         checkPermission()
-
+        checkNetworkState()
         database.child("Users").child(userName).child("devices").child(deviceId).child("cameras").addListenerForSingleValueEvent( object :ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.hasChild("1")) {
@@ -180,6 +184,34 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
 
+        }
+    }
+    private fun checkNetworkState() {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)!!
+            .state == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)!!.state == NetworkInfo.State.CONNECTED
+        if (connected){
+            return
+        }else{
+            val alertDialog = AlertDialog.Builder(this).create()
+            alertDialog.setTitle("Connection")
+            alertDialog.setMessage("You need internet connection!!")
+
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK") { dialog, _ ->
+                dialog.dismiss()
+                finishAffinity()
+            }
+
+            alertDialog.show()
+
+            val btnPositive = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+
+            val layoutParams = btnPositive.layoutParams as LinearLayout.LayoutParams
+            layoutParams.weight = 10f
+            btnPositive.layoutParams = layoutParams
         }
     }
     @Suppress("DEPRECATION")
@@ -329,7 +361,7 @@ class HomeActivity : AppCompatActivity() {
                 val sp=MainActivity.sp
                 while (sp.getBoolean("thread$cameraNum", false)) {
                     checkFileSize(sp,storageRef,devID, cameraNum)
-                    Thread.sleep(10000) // check every 10 seconds
+                    Thread.sleep(15000) // check every 10 seconds
                 }
             }
         }
@@ -375,6 +407,13 @@ class HomeActivity : AppCompatActivity() {
             e.printStackTrace()
         }
 
+    }
+
+    override fun onDestroy() {
+        MainActivity.sp.edit().putBoolean("thread0",false).apply()
+        MainActivity.sp.edit().putBoolean("thread1",false).apply()
+        MainActivity.sp.edit().putBoolean("thread2",false).apply()
+        super.onDestroy()
     }
 
 }

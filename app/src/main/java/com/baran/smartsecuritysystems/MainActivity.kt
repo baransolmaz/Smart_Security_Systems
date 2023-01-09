@@ -2,9 +2,12 @@ package com.baran.smartsecuritysystems
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -53,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         sp=getSharedPreferences("login", MODE_PRIVATE)
 
         checkPermission()
+
         if(sp.getBoolean("logged",false)){
             APP_ID = sp.getString("appID","").toString()
             APP_CER = sp.getString("appCer","").toString()
@@ -62,7 +66,9 @@ class MainActivity : AppCompatActivity() {
             //if (sp.getBoolean("clear_Log",false))
               //  clearLog()
             separate(DEVICE_ID, USERNAME,type)
-        }
+        }else
+            checkNetworkState()
+
         binding.mainSignUp.setOnClickListener {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
@@ -120,6 +126,35 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    }
+
+    private fun checkNetworkState() {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)!!
+            .state == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)!!.state == NetworkInfo.State.CONNECTED
+        if (connected){
+            return
+        }else{
+            val alertDialog = AlertDialog.Builder(this).create()
+            alertDialog.setTitle("Connection")
+            alertDialog.setMessage("You need internet connection!!")
+
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK") { dialog, _ ->
+                dialog.dismiss()
+                finishAffinity()
+            }
+
+            alertDialog.show()
+
+            val btnPositive = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+
+            val layoutParams = btnPositive.layoutParams as LinearLayout.LayoutParams
+            layoutParams.weight = 10f
+            btnPositive.layoutParams = layoutParams
+        }
     }
 
     private fun clearLog() {

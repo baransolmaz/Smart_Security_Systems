@@ -1,17 +1,22 @@
 package com.baran.smartsecuritysystems
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Matrix
 import android.hardware.camera2.*
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.util.Log
 import android.view.SurfaceView
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -183,6 +188,7 @@ class CameraActivity : AppCompatActivity(){
                 ContextCompat.checkSelfPermission(this,requestedPermissions[1]) != PackageManager.PERMISSION_GRANTED)
     }
     private fun setupVideoSDKEngine() {
+        checkNetworkState()
         try {
             val config = RtcEngineConfig()
             config.mContext = baseContext
@@ -194,6 +200,34 @@ class CameraActivity : AppCompatActivity(){
         } catch (e: Exception) {
             showMessage(e.toString())
             //refresh()
+        }
+    }
+    private fun checkNetworkState() {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        val connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)!!
+            .state == NetworkInfo.State.CONNECTED ||
+                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)!!.state == NetworkInfo.State.CONNECTED
+        if (connected){
+            return
+        }else{
+            val alertDialog = AlertDialog.Builder(this).create()
+            alertDialog.setTitle("Connection")
+            alertDialog.setMessage("You need internet connection!!")
+
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK") { dialog, _ ->
+                dialog.dismiss()
+                finishAffinity()
+            }
+
+            alertDialog.show()
+
+            val btnPositive = alertDialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+
+            val layoutParams = btnPositive.layoutParams as LinearLayout.LayoutParams
+            layoutParams.weight = 10f
+            btnPositive.layoutParams = layoutParams
         }
     }
     private val mRtcEventHandler: IRtcEngineEventHandler = object : IRtcEngineEventHandler() {
