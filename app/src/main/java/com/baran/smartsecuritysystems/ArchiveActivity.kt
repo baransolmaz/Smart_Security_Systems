@@ -52,8 +52,11 @@ class ArchiveActivity : AppCompatActivity() {
                         file.downloadUrl.addOnSuccessListener {
                             storage.child(deviceID.toString()).child(file.name).delete()
                         }
-                        MainActivity.sp.edit().putInt("size$camNum",listResult.items.size).apply()
                     }
+                    if(listResult.items.size>=20) {
+                        MainActivity.sp.edit().putInt("size$camNum", 20).apply()
+                    }else
+                        MainActivity.sp.edit().putInt("size$camNum",listResult.items.size).apply()
                 }
             }
         }

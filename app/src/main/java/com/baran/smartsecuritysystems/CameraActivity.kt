@@ -11,7 +11,6 @@ import android.hardware.camera2.*
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
-import android.util.Log
 import android.view.SurfaceView
 import android.view.View
 import android.widget.LinearLayout
@@ -21,10 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.baran.smartsecuritysystems.databinding.ActivityCameraBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -206,9 +202,8 @@ class CameraActivity : AppCompatActivity(){
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        val connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)!!
-            .state == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)!!.state == NetworkInfo.State.CONNECTED
+        val connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)!!.state == NetworkInfo.State.CONNECTED||connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)!!
+            .state == NetworkInfo.State.CONNECTED
         if (connected){
             return
         }else{
@@ -294,6 +289,13 @@ class CameraActivity : AppCompatActivity(){
             agoraEngine!!.registerVideoFrameObserver(videoFrameObserver)
 
             agoraEngine!!.joinChannel(token, channelName, uid, options)
+
+            binding.camStop.setBackgroundResource(R.drawable.rounded_button)
+            binding.camStop.isClickable=true
+
+            binding.camStart.setBackgroundResource(R.drawable.disabled_button)
+            binding.camStart.isClickable=false
+
         } else {
             Toast.makeText(applicationContext, "Permissions was not granted", Toast.LENGTH_SHORT).show()
         }
@@ -312,6 +314,12 @@ class CameraActivity : AppCompatActivity(){
         if (remoteSurfaceView != null) remoteSurfaceView!!.visibility = View.GONE
         // Stop local video rendering.
         if (localSurfaceView != null) localSurfaceView!!.visibility = View.GONE
+
+        binding.camStart.setBackgroundResource(R.drawable.rounded_button)
+        binding.camStart.isClickable=true
+
+        binding.camStop.setBackgroundResource(R.drawable.disabled_button)
+        binding.camStop.isClickable=false
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
