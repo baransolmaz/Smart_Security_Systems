@@ -1,10 +1,12 @@
 package com.baran.smartsecuritysystems
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.baran.smartsecuritysystems.databinding.ActivityProfileBinding
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.firebase.database.DataSnapshot
@@ -20,6 +22,7 @@ class ProfileActivity : AppCompatActivity() {
     //private var deviceId: String = MainActivity.DEVICE_ID
     private var database: DatabaseReference = Firebase.database.reference
 
+    @SuppressLint("SetTextI18n")
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +54,13 @@ class ProfileActivity : AppCompatActivity() {
             }
 
         })
+        var counter=0
+        for(i in HomeActivity.CHANNELS.indices){
+            if (HomeActivity.CHANNELS[i]!="e")
+                counter++
+        }
+        binding.plan.text="$counter / ${HomeActivity.CHANNELS.size} device paired."
+        binding.plan.setTextColor(ContextCompat.getColor(this,R.color.light_cyan))
 
         val navBarHome=findViewById<BottomNavigationItemView>(R.id.home_nav)
         navBarHome.setOnClickListener{

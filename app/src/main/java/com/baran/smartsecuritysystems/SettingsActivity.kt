@@ -17,6 +17,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import java.io.File
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
@@ -85,6 +86,10 @@ class SettingsActivity : AppCompatActivity() {
             database.child("Users").child(userName).removeValue()
             storage.child(deviceId).delete()
             MainActivity.sp.edit().clear().apply()
+            val logFile = File(this.filesDir,"${userName}_Log.txt")
+            if (logFile.exists()) {
+                logFile.delete()
+            }
             finishAffinity()
         }
 

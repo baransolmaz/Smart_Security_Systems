@@ -89,6 +89,10 @@ class MonitorActivity : AppCompatActivity() {
             // Start local preview.
             agoraEngine!!.startPreview()
             agoraEngine!!.disableAudio()//?????
+
+            binding.monWatch.setBackgroundResource(R.drawable.disabled_button)
+            binding.monWatch.isClickable=false
+
             // Join the channel with a temp token.
             // You need to specify the user ID yourself, and ensure that it is unique in the channel.
             agoraEngine!!.joinChannel(token, channelName, uid, options)
@@ -103,6 +107,8 @@ class MonitorActivity : AppCompatActivity() {
         if (remoteSurfaceView != null) remoteSurfaceView!!.visibility = View.GONE
         // Stop local video rendering.
         //if (localSurfaceView != null) localSurfaceView!!.visibility = View.GONE
+        binding.monWatch.setBackgroundResource(R.drawable.rounded_button)
+        binding.monWatch.isClickable=true
     }
     @Suppress("DEPRECATION")
     override fun onCreate(savedInstanceState: Bundle?) {

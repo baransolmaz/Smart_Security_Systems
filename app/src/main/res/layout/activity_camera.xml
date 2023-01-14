@@ -39,7 +39,7 @@
         android:id="@+id/cam_timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/disabled_button"
+        android:background="@drawable/rounded_button"
         android:text="@string/str_set"
         android:textColor="@color/black"
         app:backgroundTint="@null"
