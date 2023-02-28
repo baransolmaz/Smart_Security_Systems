@@ -25,6 +25,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.work.*
 import com.baran.smartsecuritysystems.databinding.ActivityHomeBinding
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.firebase.database.DataSnapshot
@@ -44,6 +45,7 @@ import java.io.FileWriter
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+
 import kotlin.concurrent.thread
 
 class HomeActivity : AppCompatActivity() {
@@ -58,6 +60,7 @@ class HomeActivity : AppCompatActivity() {
         var CHANNELS= Array<String?>(3){null}
         var TOKENS= Array<String?>(3){null}
         var PRESSED =-1
+        var counter=0
     }
     //Notification
     private lateinit var notificationManager: NotificationManager
@@ -137,13 +140,14 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun alertsInit() {
-        val logFile = File(this.filesDir,"Log.txt")
+        val logFile = File(this.filesDir,"${userName}_Log.txt")
         if (!logFile.exists()) {
             logFile.createNewFile()
         }
         try{
             val buf = BufferedReader(FileReader(logFile))
             val alertTexts=binding.alerts
+            var count=0
             do {
                 val text=buf.readLine()
                 if (text != null){
@@ -151,8 +155,9 @@ class HomeActivity : AppCompatActivity() {
                     textView.text=text.toString()
                     textView.setTextColor(ContextCompat.getColor(this,R.color.light_cyan))
                     alertTexts.addView(textView,0)
+                    count++
                 }
-              }while (text!=null)
+              }while (text!=null && count<50)
 
             buf.close()
         }catch (e:IOException){
@@ -190,9 +195,8 @@ class HomeActivity : AppCompatActivity() {
         val connectivityManager =
             getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        val connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)!!
-            .state == NetworkInfo.State.CONNECTED ||
-                connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)!!.state == NetworkInfo.State.CONNECTED
+        val connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)!!.state == NetworkInfo.State.CONNECTED||connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)!!
+            .state == NetworkInfo.State.CONNECTED
         if (connected){
             return
         }else{
@@ -249,14 +253,7 @@ class HomeActivity : AppCompatActivity() {
             MainActivity.sp.edit().putBoolean("thread$cameraNum",true).apply()
             startBackgroundTask(CHANNELS[cameraNum].toString(),cameraNum)
         }
-
-
-        /*val i=Intent(this,NotificationService::class.java)
-        i.putExtra("cameraNum",cameraNum)
-        i.putExtra("devID",CHANNELS[cameraNum].toString())
-        i.putExtra("size", 0)
-
-        startService(i)*/
+        counter++
     }
     private fun checkTokenValidation(username: String, devID: String, cameraNum: Int) {
         database.child("Users").child(username).child("devices").child(devID).child("token").addListenerForSingleValueEvent( object :ValueEventListener {
@@ -298,10 +295,11 @@ class HomeActivity : AppCompatActivity() {
             readBarcode()
         }
         MainActivity.sp.edit().putBoolean("thread$cameraNum",false).apply()
-
-        //stopService(Intent(this,NotificationService::class.java))
-        /*val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-        jobScheduler.cancel(cameraNum)*/
+        if (counter!=0) {
+            counter--
+            if (counter == 0)
+                clearLog()
+        }
     }
     private fun refresh() {
         val intent = Intent(applicationContext, HomeActivity::class.java)
@@ -357,37 +355,16 @@ class HomeActivity : AppCompatActivity() {
     private fun startBackgroundTask(devID:String,cameraNum: Int) {
         if (MainActivity.sp.getBoolean("logged",false)) {
             thread(start = true,isDaemon = true){
-                val storageRef=storage
-                val sp=MainActivity.sp
-                while (sp.getBoolean("thread$cameraNum", false)) {
-                    checkFileSize(sp,storageRef,devID, cameraNum)
-                    Thread.sleep(15000) // check every 10 seconds
+                while (MainActivity.sp.getBoolean("thread$cameraNum", false)) {
+                    checkFileSize(MainActivity.sp,storage,devID, cameraNum)
+                    Thread.sleep(10000) // check every 10 seconds
                 }
             }
         }
     }
-    private fun alertThread(){
-        val logFile = File(this.filesDir,"Log.txt")
-        if (!logFile.exists()) {
-            logFile.createNewFile()
-        }
-        try{
-            val buf = BufferedReader(FileReader(logFile))
-            val text=buf.readLine()
-            val alertTexts=binding.alerts
-            val textView=TextView(this)
-            textView.text=text.toString()
-            textView.setTextColor(ContextCompat.getColor(this,R.color.light_cyan))
-            alertTexts.addView(textView)
-            buf.close()
-        }catch (e:IOException){
-            e.printStackTrace()
-        }
-    }
-
     @SuppressLint("SetTextI18n")
     private fun appendLog(num: Int, time: String){
-        val logFile = File(this.filesDir,"Log.txt")
+        val logFile = File(this.filesDir,"${userName}_Log.txt")
         if (!logFile.exists()) {
             logFile.createNewFile()
         }
@@ -408,12 +385,25 @@ class HomeActivity : AppCompatActivity() {
         }
 
     }
-
     override fun onDestroy() {
         MainActivity.sp.edit().putBoolean("thread0",false).apply()
         MainActivity.sp.edit().putBoolean("thread1",false).apply()
         MainActivity.sp.edit().putBoolean("thread2",false).apply()
         super.onDestroy()
     }
-
+    private fun clearLog() {
+        val logFile = File(this.filesDir,"${userName}_Log.txt")
+        if (!logFile.exists()) {
+            logFile.createNewFile()
+        }
+        try{
+            //BufferedWriter for performance, true to set append to file flag
+            val buf = BufferedWriter(FileWriter(logFile, false))
+            buf.newLine()
+            buf.close()
+        }catch (e: IOException){
+            e.printStackTrace()
+        }
+        MainActivity.sp.edit().putBoolean("clear_Log",false).apply()
+    }
 }

@@ -1,6 +1,7 @@
 package com.baran.smartsecuritysystems
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,6 +14,7 @@ import android.net.NetworkInfo
 import android.os.Bundle
 import android.view.SurfaceView
 import android.view.View
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -30,6 +32,7 @@ import io.agora.rtc2.*
 import io.agora.rtc2.video.IVideoFrameObserver
 import io.agora.rtc2.video.VideoCanvas
 import java.io.ByteArrayOutputStream
+import java.util.*
 import kotlin.concurrent.thread
 import kotlin.math.abs
 
@@ -38,6 +41,8 @@ import kotlin.math.abs
 class CameraActivity : AppCompatActivity(){
     companion object {
         private const val CAMERA_PERMISSION_CODE = 100
+        var timeDif:Long=0
+        var pressed:Int =-1
     }
     private var database: DatabaseReference = Firebase.database.reference
     private var storage : StorageReference =Firebase.storage.reference
@@ -226,21 +231,10 @@ class CameraActivity : AppCompatActivity(){
         }
     }
     private val mRtcEventHandler: IRtcEngineEventHandler = object : IRtcEngineEventHandler() {
-        /*override fun onRequestToken() {
-            Log.i("KKK","reqToken")
-            setToken(SeparationActivity.generateToken(MainActivity.APP_ID,MainActivity.APP_CER,MainActivity.DEVICE_ID))
-            super.onRequestToken()
-        }
-        override fun onTokenPrivilegeWillExpire(token: String) {
-            showMessage("Token Will Expire")
-            Log.i("KKK","TokenPrivy")
-            super.onTokenPrivilegeWillExpire(setToken(SeparationActivity.generateToken(MainActivity.APP_ID,MainActivity.APP_CER,MainActivity.DEVICE_ID)))
-        }*/
-        // Listen for the remote host joining the channel to get the uid of the host.
+       // Listen for the remote host joining the channel to get the uid of the host.
         override fun onUserJoined(uid: Int, elapsed: Int) {
             showMessage("Remote user joined $uid")
-            // Set the remote video view
-            //runOnUiThread { setupRemoteVideo(uid) }
+
         }
 
         override fun onJoinChannelSuccess(channel: String, uid: Int, elapsed: Int) {
@@ -270,7 +264,18 @@ class CameraActivity : AppCompatActivity(){
         // Pass the SurfaceView object to Agora so that it renders the local video.
         agoraEngine!!.setupLocalVideo(VideoCanvas(localSurfaceView,VideoCanvas.RENDER_MODE_HIDDEN,1))
     }
-    fun joinChannel(view: View) {
+
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            // Requesting the permission
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
+        }
+    }
+    fun joinChannel(view: View?) {
+        if (timeDif!=(0).toLong()){
+            Thread.sleep(timeDif)
+        }
+
         if (checkSelfPermission()) {
             val options = ChannelMediaOptions()
             // For a Video call, set the channel profile as COMMUNICATION.
@@ -296,14 +301,11 @@ class CameraActivity : AppCompatActivity(){
             binding.camStart.setBackgroundResource(R.drawable.disabled_button)
             binding.camStart.isClickable=false
 
+            binding.camTimer.setBackgroundResource(R.drawable.disabled_button)
+            binding.camTimer.isClickable=false
+
         } else {
             Toast.makeText(applicationContext, "Permissions was not granted", Toast.LENGTH_SHORT).show()
-        }
-    }
-    private fun checkPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            // Requesting the permission
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA,Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE), 0)
         }
     }
     @Suppress("DEPRECATION")
@@ -317,6 +319,9 @@ class CameraActivity : AppCompatActivity(){
 
         binding.camStart.setBackgroundResource(R.drawable.rounded_button)
         binding.camStart.isClickable=true
+
+        binding.camTimer.setBackgroundResource(R.drawable.rounded_button)
+        binding.camTimer.isClickable=true
 
         binding.camStop.setBackgroundResource(R.drawable.disabled_button)
         binding.camStop.isClickable=false
@@ -340,6 +345,9 @@ class CameraActivity : AppCompatActivity(){
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             startActivity(intent)
             finish()
+        }
+        binding.camTimer.setOnClickListener{
+            TimePickerFragment().show(supportFragmentManager, "timePicker")
         }
         checkPermission()
 

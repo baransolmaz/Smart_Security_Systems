@@ -63,8 +63,6 @@ class MainActivity : AppCompatActivity() {
             USERNAME= sp.getString("username","").toString()
             DEVICE_ID=sp.getString("deviceID","").toString()
             val type=sp.getString("type","").toString()
-            //if (sp.getBoolean("clear_Log",false))
-              //  clearLog()
             separate(DEVICE_ID, USERNAME,type)
         }else
             checkNetworkState()
@@ -156,22 +154,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun clearLog() {
-        val logFile = File(this.filesDir,"Log.txt")
-        if (!logFile.exists()) {
-            logFile.createNewFile()
-        }
-        try{
-            //BufferedWriter for performance, true to set append to file flag
-            val buf = BufferedWriter(FileWriter(logFile, false))
-            buf.newLine()
-            buf.close()
-        }catch (e: IOException){
-            e.printStackTrace()
-        }
-        sp.edit().putBoolean("clear_Log",false).apply()
-    }
-
     private fun separate(id: String, inputUsername: String, type: String,dataSnapshot: DataSnapshot? =null) {
         val intent:Intent
         if(type == "-1") {//Camera
@@ -248,11 +230,6 @@ class MainActivity : AppCompatActivity() {
         layoutParams.weight = 10f
         btnPositive.layoutParams = layoutParams
     }
-    /*private fun refresh() {
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        startActivity(intent)
-        finish()
-    }*/
     private fun clearInputs() {
         binding.mainUsername.text.clear()
         binding.mainPassword.text.clear()

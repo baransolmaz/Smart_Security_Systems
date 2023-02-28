@@ -17,13 +17,11 @@ import io.agora.rtc2.video.VideoCanvas
 
 class MonitorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMonitorBinding
-    //private var database: DatabaseReference = Firebase.database.reference
 
     private var appID: String=MainActivity.APP_ID
     private var camNum: Int =HomeActivity.PRESSED //Camera Number
     private var token: String? = HomeActivity.TOKENS[camNum]
     private var channelName: String? = HomeActivity.CHANNELS[camNum]
-    //private var userName: String? = HomeActivity.USERNAMES[camNum]
 
     private lateinit var cameraFrame: FrameLayout
     private val uid = 0     // An integer that identifies the local user.
@@ -47,7 +45,6 @@ class MonitorActivity : AppCompatActivity() {
     private val mRtcEventHandler: IRtcEngineEventHandler = object : IRtcEngineEventHandler() {
         // Listen for the remote host joining the channel to get the uid of the host.
         override fun onUserJoined(uid: Int, elapsed: Int) {
-            //showMessage("Remote user joined $uid")
             // Set the remote video view
             runOnUiThread { setupRemoteVideo(uid) }
         }

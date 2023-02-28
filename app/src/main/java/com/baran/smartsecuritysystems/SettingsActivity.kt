@@ -94,11 +94,6 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         alertDialog.show()
-        /*val btnPositive = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-
-        val layoutParams = btnPositive.layoutParams as LinearLayout.LayoutParams
-        layoutParams.weight = 10f
-        btnPositive.layoutParams = layoutParams*/
     }
     private fun askNewTxt(txt:String){
         val alertDialog = AlertDialog.Builder(this).create()
